@@ -14,7 +14,538 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      campaigns: {
+        Row: {
+          created_at: string
+          id: string
+          milestones: Json
+          status: string
+          tags: string[]
+          title: string
+          updated_at: string
+          user_id: string
+          win_condition: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          milestones?: Json
+          status?: string
+          tags?: string[]
+          title: string
+          updated_at?: string
+          user_id: string
+          win_condition?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          milestones?: Json
+          status?: string
+          tags?: string[]
+          title?: string
+          updated_at?: string
+          user_id?: string
+          win_condition?: string | null
+        }
+        Relationships: []
+      }
+      daily_reviews: {
+        Row: {
+          carry_forward: string | null
+          created_at: string
+          date: string
+          focus_intention: string | null
+          id: string
+          updated_at: string
+          user_id: string
+          went_well: string | null
+        }
+        Insert: {
+          carry_forward?: string | null
+          created_at?: string
+          date?: string
+          focus_intention?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+          went_well?: string | null
+        }
+        Update: {
+          carry_forward?: string | null
+          created_at?: string
+          date?: string
+          focus_intention?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+          went_well?: string | null
+        }
+        Relationships: []
+      }
+      design_log_entries: {
+        Row: {
+          body: string | null
+          created_at: string
+          date: string
+          id: string
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          date?: string
+          id?: string
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          date?: string
+          id?: string
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      desire_cycles: {
+        Row: {
+          adjustment_direction: string | null
+          buyer: string | null
+          constraint_type: string | null
+          consume_what: string | null
+          created_at: string
+          current_phase: number
+          desire: string | null
+          desire_type: string | null
+          diagnosis: string | null
+          enforcement: string | null
+          expansion_notes: string | null
+          feedback_notes: string | null
+          feedback_satisfaction: string | null
+          id: string
+          intensity: number | null
+          lacking: string | null
+          loop_input: string | null
+          loop_output: string | null
+          loop_process: string | null
+          loop_value: string | null
+          model_change: string | null
+          new_desires_triggered: string | null
+          produce_what: string | null
+          production_output: string | null
+          quota: string | null
+          resource_access: string | null
+          resource_money: string | null
+          resource_network: string | null
+          resource_skill: string | null
+          resource_time: string | null
+          reward: string | null
+          scope_leveraged: string | null
+          scope_shared: string | null
+          scope_solo: string | null
+          status: string
+          target_note: string | null
+          time_horizon: string | null
+          trigger: string | null
+          updated_at: string
+          user_id: string
+          worth_it: string | null
+        }
+        Insert: {
+          adjustment_direction?: string | null
+          buyer?: string | null
+          constraint_type?: string | null
+          consume_what?: string | null
+          created_at?: string
+          current_phase?: number
+          desire?: string | null
+          desire_type?: string | null
+          diagnosis?: string | null
+          enforcement?: string | null
+          expansion_notes?: string | null
+          feedback_notes?: string | null
+          feedback_satisfaction?: string | null
+          id?: string
+          intensity?: number | null
+          lacking?: string | null
+          loop_input?: string | null
+          loop_output?: string | null
+          loop_process?: string | null
+          loop_value?: string | null
+          model_change?: string | null
+          new_desires_triggered?: string | null
+          produce_what?: string | null
+          production_output?: string | null
+          quota?: string | null
+          resource_access?: string | null
+          resource_money?: string | null
+          resource_network?: string | null
+          resource_skill?: string | null
+          resource_time?: string | null
+          reward?: string | null
+          scope_leveraged?: string | null
+          scope_shared?: string | null
+          scope_solo?: string | null
+          status?: string
+          target_note?: string | null
+          time_horizon?: string | null
+          trigger?: string | null
+          updated_at?: string
+          user_id: string
+          worth_it?: string | null
+        }
+        Update: {
+          adjustment_direction?: string | null
+          buyer?: string | null
+          constraint_type?: string | null
+          consume_what?: string | null
+          created_at?: string
+          current_phase?: number
+          desire?: string | null
+          desire_type?: string | null
+          diagnosis?: string | null
+          enforcement?: string | null
+          expansion_notes?: string | null
+          feedback_notes?: string | null
+          feedback_satisfaction?: string | null
+          id?: string
+          intensity?: number | null
+          lacking?: string | null
+          loop_input?: string | null
+          loop_output?: string | null
+          loop_process?: string | null
+          loop_value?: string | null
+          model_change?: string | null
+          new_desires_triggered?: string | null
+          produce_what?: string | null
+          production_output?: string | null
+          quota?: string | null
+          resource_access?: string | null
+          resource_money?: string | null
+          resource_network?: string | null
+          resource_skill?: string | null
+          resource_time?: string | null
+          reward?: string | null
+          scope_leveraged?: string | null
+          scope_shared?: string | null
+          scope_solo?: string | null
+          status?: string
+          target_note?: string | null
+          time_horizon?: string | null
+          trigger?: string | null
+          updated_at?: string
+          user_id?: string
+          worth_it?: string | null
+        }
+        Relationships: []
+      }
+      ecosystem_entries: {
+        Row: {
+          created_at: string
+          encountered_at: string
+          entry_type: string
+          excerpt: string | null
+          id: string
+          image_url: string | null
+          source_url: string | null
+          tags: string[]
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          encountered_at?: string
+          entry_type?: string
+          excerpt?: string | null
+          id?: string
+          image_url?: string | null
+          source_url?: string | null
+          tags?: string[]
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          encountered_at?: string
+          entry_type?: string
+          excerpt?: string | null
+          id?: string
+          image_url?: string | null
+          source_url?: string | null
+          tags?: string[]
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      perma_entries: {
+        Row: {
+          achievement: number
+          created_at: string
+          date: string
+          economic_security: number
+          engagement: number
+          environment: number
+          id: string
+          meaning: number
+          physical_health: number
+          positive_emotion: number
+          positive_mindset: number
+          relationships: number
+          user_id: string
+        }
+        Insert: {
+          achievement?: number
+          created_at?: string
+          date?: string
+          economic_security?: number
+          engagement?: number
+          environment?: number
+          id?: string
+          meaning?: number
+          physical_health?: number
+          positive_emotion?: number
+          positive_mindset?: number
+          relationships?: number
+          user_id: string
+        }
+        Update: {
+          achievement?: number
+          created_at?: string
+          date?: string
+          economic_security?: number
+          engagement?: number
+          environment?: number
+          id?: string
+          meaning?: number
+          physical_health?: number
+          positive_emotion?: number
+          positive_mindset?: number
+          relationships?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      personal_map_paths: {
+        Row: {
+          description: string | null
+          id: string
+          metrics: Json
+          path_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          description?: string | null
+          id?: string
+          metrics?: Json
+          path_type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          description?: string | null
+          id?: string
+          metrics?: Json
+          path_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      philosophy_entries: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          index: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          index: string
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          index?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      player_stats: {
+        Row: {
+          capital_financial: number
+          capital_health: number
+          capital_human: number
+          capital_psychological: number
+          capital_social: number
+          capital_symbolic: number
+          capital_time_autonomy: number
+          id: string
+          last_completion_date: string | null
+          level: number
+          streak_best: number
+          streak_current: number
+          updated_at: string
+          user_id: string
+          xp_to_next: number
+          xp_total: number
+        }
+        Insert: {
+          capital_financial?: number
+          capital_health?: number
+          capital_human?: number
+          capital_psychological?: number
+          capital_social?: number
+          capital_symbolic?: number
+          capital_time_autonomy?: number
+          id?: string
+          last_completion_date?: string | null
+          level?: number
+          streak_best?: number
+          streak_current?: number
+          updated_at?: string
+          user_id: string
+          xp_to_next?: number
+          xp_total?: number
+        }
+        Update: {
+          capital_financial?: number
+          capital_health?: number
+          capital_human?: number
+          capital_psychological?: number
+          capital_social?: number
+          capital_symbolic?: number
+          capital_time_autonomy?: number
+          id?: string
+          last_completion_date?: string | null
+          level?: number
+          streak_best?: number
+          streak_current?: number
+          updated_at?: string
+          user_id?: string
+          xp_to_next?: number
+          xp_total?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          name: string | null
+          onboarded: boolean
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          name?: string | null
+          onboarded?: boolean
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string | null
+          onboarded?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      quest_completions: {
+        Row: {
+          completed_at: string
+          created_at: string
+          id: string
+          quest_id: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          created_at?: string
+          id?: string
+          quest_id: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string
+          created_at?: string
+          id?: string
+          quest_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quest_completions_quest_id_fkey"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "quests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quests: {
+        Row: {
+          archived: boolean
+          campaign_id: string | null
+          created_at: string
+          id: string
+          recurrence: string
+          title: string
+          type: string
+          user_id: string
+          xp_value: number
+        }
+        Insert: {
+          archived?: boolean
+          campaign_id?: string | null
+          created_at?: string
+          id?: string
+          recurrence?: string
+          title: string
+          type?: string
+          user_id: string
+          xp_value?: number
+        }
+        Update: {
+          archived?: boolean
+          campaign_id?: string | null
+          created_at?: string
+          id?: string
+          recurrence?: string
+          title?: string
+          type?: string
+          user_id?: string
+          xp_value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quests_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
