@@ -9,60 +9,310 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as AppRouteImport } from './routes/_app'
+import { Route as AppIndexRouteImport } from './routes/_app/index'
+import { Route as AppStatsRouteImport } from './routes/_app/stats'
+import { Route as AppQuestsRouteImport } from './routes/_app/quests'
+import { Route as AppPhilosophyRouteImport } from './routes/_app/philosophy'
+import { Route as AppPermaRouteImport } from './routes/_app/perma'
+import { Route as AppMapRouteImport } from './routes/_app/map'
+import { Route as AppLogRouteImport } from './routes/_app/log'
+import { Route as AppEcosystemRouteImport } from './routes/_app/ecosystem'
+import { Route as AppDesireRouteImport } from './routes/_app/desire'
+import { Route as AppCampaignsRouteImport } from './routes/_app/campaigns'
 
-const IndexRoute = IndexRouteImport.update({
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStatsRoute = AppStatsRouteImport.update({
+  id: '/stats',
+  path: '/stats',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppQuestsRoute = AppQuestsRouteImport.update({
+  id: '/quests',
+  path: '/quests',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPhilosophyRoute = AppPhilosophyRouteImport.update({
+  id: '/philosophy',
+  path: '/philosophy',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPermaRoute = AppPermaRouteImport.update({
+  id: '/perma',
+  path: '/perma',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMapRoute = AppMapRouteImport.update({
+  id: '/map',
+  path: '/map',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppLogRoute = AppLogRouteImport.update({
+  id: '/log',
+  path: '/log',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEcosystemRoute = AppEcosystemRouteImport.update({
+  id: '/ecosystem',
+  path: '/ecosystem',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDesireRoute = AppDesireRouteImport.update({
+  id: '/desire',
+  path: '/desire',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCampaignsRoute = AppCampaignsRouteImport.update({
+  id: '/campaigns',
+  path: '/campaigns',
+  getParentRoute: () => AppRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof AppIndexRoute
+  '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
+  '/campaigns': typeof AppCampaignsRoute
+  '/desire': typeof AppDesireRoute
+  '/ecosystem': typeof AppEcosystemRoute
+  '/log': typeof AppLogRoute
+  '/map': typeof AppMapRoute
+  '/perma': typeof AppPermaRoute
+  '/philosophy': typeof AppPhilosophyRoute
+  '/quests': typeof AppQuestsRoute
+  '/stats': typeof AppStatsRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
+  '/campaigns': typeof AppCampaignsRoute
+  '/desire': typeof AppDesireRoute
+  '/ecosystem': typeof AppEcosystemRoute
+  '/log': typeof AppLogRoute
+  '/map': typeof AppMapRoute
+  '/perma': typeof AppPermaRoute
+  '/philosophy': typeof AppPhilosophyRoute
+  '/quests': typeof AppQuestsRoute
+  '/stats': typeof AppStatsRoute
+  '/': typeof AppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_app': typeof AppRouteWithChildren
+  '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
+  '/_app/campaigns': typeof AppCampaignsRoute
+  '/_app/desire': typeof AppDesireRoute
+  '/_app/ecosystem': typeof AppEcosystemRoute
+  '/_app/log': typeof AppLogRoute
+  '/_app/map': typeof AppMapRoute
+  '/_app/perma': typeof AppPermaRoute
+  '/_app/philosophy': typeof AppPhilosophyRoute
+  '/_app/quests': typeof AppQuestsRoute
+  '/_app/stats': typeof AppStatsRoute
+  '/_app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/onboarding'
+    | '/campaigns'
+    | '/desire'
+    | '/ecosystem'
+    | '/log'
+    | '/map'
+    | '/perma'
+    | '/philosophy'
+    | '/quests'
+    | '/stats'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/login'
+    | '/onboarding'
+    | '/campaigns'
+    | '/desire'
+    | '/ecosystem'
+    | '/log'
+    | '/map'
+    | '/perma'
+    | '/philosophy'
+    | '/quests'
+    | '/stats'
+    | '/'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/login'
+    | '/onboarding'
+    | '/_app/campaigns'
+    | '/_app/desire'
+    | '/_app/ecosystem'
+    | '/_app/log'
+    | '/_app/map'
+    | '/_app/perma'
+    | '/_app/philosophy'
+    | '/_app/quests'
+    | '/_app/stats'
+    | '/_app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  OnboardingRoute: typeof OnboardingRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app/': {
+      id: '/_app/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/stats': {
+      id: '/_app/stats'
+      path: '/stats'
+      fullPath: '/stats'
+      preLoaderRoute: typeof AppStatsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/quests': {
+      id: '/_app/quests'
+      path: '/quests'
+      fullPath: '/quests'
+      preLoaderRoute: typeof AppQuestsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/philosophy': {
+      id: '/_app/philosophy'
+      path: '/philosophy'
+      fullPath: '/philosophy'
+      preLoaderRoute: typeof AppPhilosophyRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/perma': {
+      id: '/_app/perma'
+      path: '/perma'
+      fullPath: '/perma'
+      preLoaderRoute: typeof AppPermaRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/map': {
+      id: '/_app/map'
+      path: '/map'
+      fullPath: '/map'
+      preLoaderRoute: typeof AppMapRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/log': {
+      id: '/_app/log'
+      path: '/log'
+      fullPath: '/log'
+      preLoaderRoute: typeof AppLogRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/ecosystem': {
+      id: '/_app/ecosystem'
+      path: '/ecosystem'
+      fullPath: '/ecosystem'
+      preLoaderRoute: typeof AppEcosystemRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/desire': {
+      id: '/_app/desire'
+      path: '/desire'
+      fullPath: '/desire'
+      preLoaderRoute: typeof AppDesireRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/campaigns': {
+      id: '/_app/campaigns'
+      path: '/campaigns'
+      fullPath: '/campaigns'
+      preLoaderRoute: typeof AppCampaignsRouteImport
+      parentRoute: typeof AppRoute
     }
   }
 }
 
+interface AppRouteChildren {
+  AppCampaignsRoute: typeof AppCampaignsRoute
+  AppDesireRoute: typeof AppDesireRoute
+  AppEcosystemRoute: typeof AppEcosystemRoute
+  AppLogRoute: typeof AppLogRoute
+  AppMapRoute: typeof AppMapRoute
+  AppPermaRoute: typeof AppPermaRoute
+  AppPhilosophyRoute: typeof AppPhilosophyRoute
+  AppQuestsRoute: typeof AppQuestsRoute
+  AppStatsRoute: typeof AppStatsRoute
+  AppIndexRoute: typeof AppIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppCampaignsRoute: AppCampaignsRoute,
+  AppDesireRoute: AppDesireRoute,
+  AppEcosystemRoute: AppEcosystemRoute,
+  AppLogRoute: AppLogRoute,
+  AppMapRoute: AppMapRoute,
+  AppPermaRoute: AppPermaRoute,
+  AppPhilosophyRoute: AppPhilosophyRoute,
+  AppQuestsRoute: AppQuestsRoute,
+  AppStatsRoute: AppStatsRoute,
+  AppIndexRoute: AppIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  LoginRoute: LoginRoute,
+  OnboardingRoute: OnboardingRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
