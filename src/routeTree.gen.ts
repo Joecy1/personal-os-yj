@@ -14,6 +14,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as AppStatsRouteImport } from './routes/_app/stats'
+import { Route as AppRelationsRouteImport } from './routes/_app/relations'
 import { Route as AppQuestsRouteImport } from './routes/_app/quests'
 import { Route as AppPhilosophyRouteImport } from './routes/_app/philosophy'
 import { Route as AppPermaRouteImport } from './routes/_app/perma'
@@ -44,6 +45,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
 const AppStatsRoute = AppStatsRouteImport.update({
   id: '/stats',
   path: '/stats',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRelationsRoute = AppRelationsRouteImport.update({
+  id: '/relations',
+  path: '/relations',
   getParentRoute: () => AppRoute,
 } as any)
 const AppQuestsRoute = AppQuestsRouteImport.update({
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/perma': typeof AppPermaRoute
   '/philosophy': typeof AppPhilosophyRoute
   '/quests': typeof AppQuestsRoute
+  '/relations': typeof AppRelationsRoute
   '/stats': typeof AppStatsRoute
 }
 export interface FileRoutesByTo {
@@ -105,6 +112,7 @@ export interface FileRoutesByTo {
   '/perma': typeof AppPermaRoute
   '/philosophy': typeof AppPhilosophyRoute
   '/quests': typeof AppQuestsRoute
+  '/relations': typeof AppRelationsRoute
   '/stats': typeof AppStatsRoute
   '/': typeof AppIndexRoute
 }
@@ -120,6 +128,7 @@ export interface FileRoutesById {
   '/_app/perma': typeof AppPermaRoute
   '/_app/philosophy': typeof AppPhilosophyRoute
   '/_app/quests': typeof AppQuestsRoute
+  '/_app/relations': typeof AppRelationsRoute
   '/_app/stats': typeof AppStatsRoute
   '/_app/': typeof AppIndexRoute
 }
@@ -136,6 +145,7 @@ export interface FileRouteTypes {
     | '/perma'
     | '/philosophy'
     | '/quests'
+    | '/relations'
     | '/stats'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -148,6 +158,7 @@ export interface FileRouteTypes {
     | '/perma'
     | '/philosophy'
     | '/quests'
+    | '/relations'
     | '/stats'
     | '/'
   id:
@@ -162,6 +173,7 @@ export interface FileRouteTypes {
     | '/_app/perma'
     | '/_app/philosophy'
     | '/_app/quests'
+    | '/_app/relations'
     | '/_app/stats'
     | '/_app/'
   fileRoutesById: FileRoutesById
@@ -207,6 +219,13 @@ declare module '@tanstack/react-router' {
       path: '/stats'
       fullPath: '/stats'
       preLoaderRoute: typeof AppStatsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/relations': {
+      id: '/_app/relations'
+      path: '/relations'
+      fullPath: '/relations'
+      preLoaderRoute: typeof AppRelationsRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/quests': {
@@ -269,6 +288,7 @@ interface AppRouteChildren {
   AppPermaRoute: typeof AppPermaRoute
   AppPhilosophyRoute: typeof AppPhilosophyRoute
   AppQuestsRoute: typeof AppQuestsRoute
+  AppRelationsRoute: typeof AppRelationsRoute
   AppStatsRoute: typeof AppStatsRoute
   AppIndexRoute: typeof AppIndexRoute
 }
@@ -281,6 +301,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppPermaRoute: AppPermaRoute,
   AppPhilosophyRoute: AppPhilosophyRoute,
   AppQuestsRoute: AppQuestsRoute,
+  AppRelationsRoute: AppRelationsRoute,
   AppStatsRoute: AppStatsRoute,
   AppIndexRoute: AppIndexRoute,
 }
