@@ -13,6 +13,7 @@ import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
+import { Route as AppWorldmapRouteImport } from './routes/_app/worldmap'
 import { Route as AppStatsRouteImport } from './routes/_app/stats'
 import { Route as AppRelationsRouteImport } from './routes/_app/relations'
 import { Route as AppQuestsRouteImport } from './routes/_app/quests'
@@ -40,6 +41,11 @@ const AppRoute = AppRouteImport.update({
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppWorldmapRoute = AppWorldmapRouteImport.update({
+  id: '/worldmap',
+  path: '/worldmap',
   getParentRoute: () => AppRoute,
 } as any)
 const AppStatsRoute = AppStatsRouteImport.update({
@@ -101,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/quests': typeof AppQuestsRoute
   '/relations': typeof AppRelationsRoute
   '/stats': typeof AppStatsRoute
+  '/worldmap': typeof AppWorldmapRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
@@ -114,6 +121,7 @@ export interface FileRoutesByTo {
   '/quests': typeof AppQuestsRoute
   '/relations': typeof AppRelationsRoute
   '/stats': typeof AppStatsRoute
+  '/worldmap': typeof AppWorldmapRoute
   '/': typeof AppIndexRoute
 }
 export interface FileRoutesById {
@@ -130,6 +138,7 @@ export interface FileRoutesById {
   '/_app/quests': typeof AppQuestsRoute
   '/_app/relations': typeof AppRelationsRoute
   '/_app/stats': typeof AppStatsRoute
+  '/_app/worldmap': typeof AppWorldmapRoute
   '/_app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
@@ -147,6 +156,7 @@ export interface FileRouteTypes {
     | '/quests'
     | '/relations'
     | '/stats'
+    | '/worldmap'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -160,6 +170,7 @@ export interface FileRouteTypes {
     | '/quests'
     | '/relations'
     | '/stats'
+    | '/worldmap'
     | '/'
   id:
     | '__root__'
@@ -175,6 +186,7 @@ export interface FileRouteTypes {
     | '/_app/quests'
     | '/_app/relations'
     | '/_app/stats'
+    | '/_app/worldmap'
     | '/_app/'
   fileRoutesById: FileRoutesById
 }
@@ -212,6 +224,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/worldmap': {
+      id: '/_app/worldmap'
+      path: '/worldmap'
+      fullPath: '/worldmap'
+      preLoaderRoute: typeof AppWorldmapRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/stats': {
@@ -290,6 +309,7 @@ interface AppRouteChildren {
   AppQuestsRoute: typeof AppQuestsRoute
   AppRelationsRoute: typeof AppRelationsRoute
   AppStatsRoute: typeof AppStatsRoute
+  AppWorldmapRoute: typeof AppWorldmapRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
@@ -303,6 +323,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppQuestsRoute: AppQuestsRoute,
   AppRelationsRoute: AppRelationsRoute,
   AppStatsRoute: AppStatsRoute,
+  AppWorldmapRoute: AppWorldmapRoute,
   AppIndexRoute: AppIndexRoute,
 }
 

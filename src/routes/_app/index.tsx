@@ -47,6 +47,29 @@ function Daily() {
     },
   });
 
+  const { data: relSurfaced } = useQuery({
+    queryKey: ["rel-surface", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const [people, ints] = await Promise.all([
+        supabase.from("relation_people").select("*"),
+        supabase.from("relation_interactions").select("*").order("interaction_date", { ascending: false }),
+      ]);
+      const peopleById = new Map((people.data ?? []).map((p) => [p.id, p]));
+      const interactions = (ints.data ?? []) as Array<{ id: string; person_id: string; what_happened: string; want_to_say: string | null; interaction_date: string }>;
+      const withUnsaid = interactions.filter((i) => i.want_to_say && i.want_to_say.trim());
+      // overdue: latest interaction per person > 7 days ago
+      const latestByPerson = new Map<string, typeof interactions[number]>();
+      interactions.forEach((i) => { if (!latestByPerson.has(i.person_id)) latestByPerson.set(i.person_id, i); });
+      const sevenAgo = new Date(); sevenAgo.setDate(sevenAgo.getDate() - 7);
+      const overdue = Array.from(latestByPerson.values()).filter((i) => new Date(i.interaction_date) < sevenAgo);
+      const surfaced: Array<{ kind: "unsaid" | "overdue"; interaction: typeof interactions[number]; person: any }> = [];
+      withUnsaid.forEach((i) => { const p = peopleById.get(i.person_id); if (p) surfaced.push({ kind: "unsaid", interaction: i, person: p }); });
+      overdue.forEach((i) => { if (surfaced.find((s) => s.person.id === i.person_id)) return; const p = peopleById.get(i.person_id); if (p) surfaced.push({ kind: "overdue", interaction: i, person: p }); });
+      return surfaced.slice(0, 2);
+    },
+  });
+
   const [focus, setFocus] = useState("");
   const [wentWell, setWentWell] = useState("");
   const [carry, setCarry] = useState("");
