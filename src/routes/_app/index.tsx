@@ -110,7 +110,7 @@ function Daily() {
         />
       </div>
 
-      <div style={{ background: "var(--green-bg)", border: "1px solid rgba(58,125,68,0.2)", borderRadius: 10, padding: "16px 20px", marginBottom: 32 }}>
+      <div style={{ background: "var(--green-bg)", border: "1px solid rgba(58,125,68,0.2)", borderRadius: 10, padding: "16px 20px", marginBottom: 16 }}>
         <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--green)", marginBottom: 8 }}>From your ecosystem — resonant today</div>
         {(ecoSurfaced?.length ?? 0) === 0 ? (
           <Link to="/ecosystem" style={{ fontSize: 13, color: "var(--ink)" }}>Your ecosystem is empty — log your first encounter →</Link>
@@ -124,6 +124,31 @@ function Daily() {
               </div>
             </Link>
           ))
+        )}
+      </div>
+
+      <div style={{ background: "var(--teal-bg)", border: "1px solid rgba(10,122,106,0.2)", borderRadius: 10, padding: "16px 20px", marginBottom: 32 }}>
+        <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--teal)", marginBottom: 8 }}>From your relations — worth revisiting</div>
+        {(relSurfaced?.length ?? 0) === 0 ? (
+          <Link to="/relations" style={{ fontSize: 13, color: "var(--ink)" }}>You haven't logged any interactions yet — who did you meet recently?</Link>
+        ) : (
+          relSurfaced!.map((s, i) => {
+            const days = Math.max(0, Math.floor((Date.now() - new Date(s.interaction.interaction_date).getTime()) / 86400000));
+            const nudge = s.kind === "unsaid"
+              ? `You haven't told ${s.person.name} something you wanted to say. ${(s.interaction.want_to_say ?? "").slice(0, 60)}${(s.interaction.want_to_say ?? "").length > 60 ? "…" : ""}`
+              : `You haven't spoken to ${s.person.name} in ${days} days. ${s.interaction.what_happened.slice(0, 60)}${s.interaction.what_happened.length > 60 ? "…" : ""}`;
+            return (
+              <Link key={s.interaction.id} to="/relations" style={{ display: "flex", gap: 12, alignItems: "flex-start", padding: "8px 0", borderBottom: i < relSurfaced!.length - 1 ? "1px solid rgba(10,122,106,0.1)" : "none", textDecoration: "none", color: "inherit" }}>
+                <div style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--teal)", marginTop: 6 }} />
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 13, color: "var(--ink)", lineHeight: 1.5 }}>{nudge}</div>
+                  <div style={{ fontSize: 11, color: "var(--ink-3)", marginTop: 2 }}>
+                    <strong>{s.person.name}</strong>{(s.person.tags ?? []).length ? ` · ${s.person.tags[0]}` : ""}{s.kind === "unsaid" ? " · pending want-to-say" : ` · ${days}d ago`}
+                  </div>
+                </div>
+              </Link>
+            );
+          })
         )}
       </div>
 
