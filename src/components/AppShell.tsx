@@ -4,7 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { longDate } from "@/lib/date";
 
-const sections: Array<{ label: string; items: Array<{ to: string; label: string; dot: string; badgeKey?: "campaigns" | "quests" | "ecosystem" }> }> = [
+type BadgeKey = "campaigns" | "quests" | "ecosystem" | "relations" | "worldmaps";
+const sections: Array<{ label: string; items: Array<{ to: string; label: string; dot: string; badgeKey?: BadgeKey }> }> = [
   { label: "Today", items: [{ to: "/", label: "Daily session", dot: "var(--amber)" }] },
   {
     label: "Execution",
@@ -13,15 +14,19 @@ const sections: Array<{ label: string; items: Array<{ to: string; label: string;
       { to: "/quests", label: "Daily quests", dot: "var(--teal)", badgeKey: "quests" },
       { to: "/desire", label: "Desire engine", dot: "var(--amber)" },
       { to: "/stats", label: "Stats", dot: "var(--teal)" },
+    ],
+  },
+  {
+    label: "World",
+    items: [
       { to: "/ecosystem", label: "Ecosystem", dot: "var(--green)", badgeKey: "ecosystem" },
+      { to: "/relations", label: "Relations", dot: "var(--green)", badgeKey: "relations" },
+      { to: "/worldmap", label: "World map", dot: "var(--purple)", badgeKey: "worldmaps" },
     ],
   },
   {
     label: "Reflection",
-    items: [
-      { to: "/perma", label: "PERMA+4", dot: "var(--coral)" },
-      { to: "/log", label: "Design log", dot: "var(--coral)" },
-    ],
+    items: [{ to: "/perma", label: "PERMA+4", dot: "var(--coral)" }],
   },
   {
     label: "Self-model",
@@ -38,15 +43,17 @@ function useBadges(userId: string | undefined) {
     enabled: !!userId,
     queryFn: async () => {
       const today = new Date().toISOString().slice(0, 10);
-      const [c, q, e, comps] = await Promise.all([
+      const [c, q, e, comps, rp, wm] = await Promise.all([
         supabase.from("campaigns").select("id", { count: "exact", head: true }).eq("status", "active"),
         supabase.from("quests").select("id").eq("archived", false),
         supabase.from("ecosystem_entries").select("id", { count: "exact", head: true }),
         supabase.from("quest_completions").select("quest_id").eq("completed_at", today),
+        supabase.from("relation_people").select("id", { count: "exact", head: true }),
+        supabase.from("world_maps").select("id", { count: "exact", head: true }).eq("status", "complete"),
       ]);
       const completedToday = new Set((comps.data ?? []).map((r) => r.quest_id));
       const incomplete = (q.data ?? []).filter((qq) => !completedToday.has(qq.id)).length;
-      return { campaigns: c.count ?? 0, quests: incomplete, ecosystem: e.count ?? 0 };
+      return { campaigns: c.count ?? 0, quests: incomplete, ecosystem: e.count ?? 0, relations: rp.count ?? 0, worldmaps: wm.count ?? 0 };
     },
   });
 }

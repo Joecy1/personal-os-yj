@@ -13,12 +13,13 @@ import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
+import { Route as AppWorldmapRouteImport } from './routes/_app/worldmap'
 import { Route as AppStatsRouteImport } from './routes/_app/stats'
+import { Route as AppRelationsRouteImport } from './routes/_app/relations'
 import { Route as AppQuestsRouteImport } from './routes/_app/quests'
 import { Route as AppPhilosophyRouteImport } from './routes/_app/philosophy'
 import { Route as AppPermaRouteImport } from './routes/_app/perma'
 import { Route as AppMapRouteImport } from './routes/_app/map'
-import { Route as AppLogRouteImport } from './routes/_app/log'
 import { Route as AppEcosystemRouteImport } from './routes/_app/ecosystem'
 import { Route as AppDesireRouteImport } from './routes/_app/desire'
 import { Route as AppCampaignsRouteImport } from './routes/_app/campaigns'
@@ -42,9 +43,19 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppWorldmapRoute = AppWorldmapRouteImport.update({
+  id: '/worldmap',
+  path: '/worldmap',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppStatsRoute = AppStatsRouteImport.update({
   id: '/stats',
   path: '/stats',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRelationsRoute = AppRelationsRouteImport.update({
+  id: '/relations',
+  path: '/relations',
   getParentRoute: () => AppRoute,
 } as any)
 const AppQuestsRoute = AppQuestsRouteImport.update({
@@ -65,11 +76,6 @@ const AppPermaRoute = AppPermaRouteImport.update({
 const AppMapRoute = AppMapRouteImport.update({
   id: '/map',
   path: '/map',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppLogRoute = AppLogRouteImport.update({
-  id: '/log',
-  path: '/log',
   getParentRoute: () => AppRoute,
 } as any)
 const AppEcosystemRoute = AppEcosystemRouteImport.update({
@@ -95,12 +101,13 @@ export interface FileRoutesByFullPath {
   '/campaigns': typeof AppCampaignsRoute
   '/desire': typeof AppDesireRoute
   '/ecosystem': typeof AppEcosystemRoute
-  '/log': typeof AppLogRoute
   '/map': typeof AppMapRoute
   '/perma': typeof AppPermaRoute
   '/philosophy': typeof AppPhilosophyRoute
   '/quests': typeof AppQuestsRoute
+  '/relations': typeof AppRelationsRoute
   '/stats': typeof AppStatsRoute
+  '/worldmap': typeof AppWorldmapRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
@@ -108,12 +115,13 @@ export interface FileRoutesByTo {
   '/campaigns': typeof AppCampaignsRoute
   '/desire': typeof AppDesireRoute
   '/ecosystem': typeof AppEcosystemRoute
-  '/log': typeof AppLogRoute
   '/map': typeof AppMapRoute
   '/perma': typeof AppPermaRoute
   '/philosophy': typeof AppPhilosophyRoute
   '/quests': typeof AppQuestsRoute
+  '/relations': typeof AppRelationsRoute
   '/stats': typeof AppStatsRoute
+  '/worldmap': typeof AppWorldmapRoute
   '/': typeof AppIndexRoute
 }
 export interface FileRoutesById {
@@ -124,12 +132,13 @@ export interface FileRoutesById {
   '/_app/campaigns': typeof AppCampaignsRoute
   '/_app/desire': typeof AppDesireRoute
   '/_app/ecosystem': typeof AppEcosystemRoute
-  '/_app/log': typeof AppLogRoute
   '/_app/map': typeof AppMapRoute
   '/_app/perma': typeof AppPermaRoute
   '/_app/philosophy': typeof AppPhilosophyRoute
   '/_app/quests': typeof AppQuestsRoute
+  '/_app/relations': typeof AppRelationsRoute
   '/_app/stats': typeof AppStatsRoute
+  '/_app/worldmap': typeof AppWorldmapRoute
   '/_app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
@@ -141,12 +150,13 @@ export interface FileRouteTypes {
     | '/campaigns'
     | '/desire'
     | '/ecosystem'
-    | '/log'
     | '/map'
     | '/perma'
     | '/philosophy'
     | '/quests'
+    | '/relations'
     | '/stats'
+    | '/worldmap'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -154,12 +164,13 @@ export interface FileRouteTypes {
     | '/campaigns'
     | '/desire'
     | '/ecosystem'
-    | '/log'
     | '/map'
     | '/perma'
     | '/philosophy'
     | '/quests'
+    | '/relations'
     | '/stats'
+    | '/worldmap'
     | '/'
   id:
     | '__root__'
@@ -169,12 +180,13 @@ export interface FileRouteTypes {
     | '/_app/campaigns'
     | '/_app/desire'
     | '/_app/ecosystem'
-    | '/_app/log'
     | '/_app/map'
     | '/_app/perma'
     | '/_app/philosophy'
     | '/_app/quests'
+    | '/_app/relations'
     | '/_app/stats'
+    | '/_app/worldmap'
     | '/_app/'
   fileRoutesById: FileRoutesById
 }
@@ -214,11 +226,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/worldmap': {
+      id: '/_app/worldmap'
+      path: '/worldmap'
+      fullPath: '/worldmap'
+      preLoaderRoute: typeof AppWorldmapRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/stats': {
       id: '/_app/stats'
       path: '/stats'
       fullPath: '/stats'
       preLoaderRoute: typeof AppStatsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/relations': {
+      id: '/_app/relations'
+      path: '/relations'
+      fullPath: '/relations'
+      preLoaderRoute: typeof AppRelationsRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/quests': {
@@ -249,13 +275,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMapRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/log': {
-      id: '/_app/log'
-      path: '/log'
-      fullPath: '/log'
-      preLoaderRoute: typeof AppLogRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/_app/ecosystem': {
       id: '/_app/ecosystem'
       path: '/ecosystem'
@@ -284,12 +303,13 @@ interface AppRouteChildren {
   AppCampaignsRoute: typeof AppCampaignsRoute
   AppDesireRoute: typeof AppDesireRoute
   AppEcosystemRoute: typeof AppEcosystemRoute
-  AppLogRoute: typeof AppLogRoute
   AppMapRoute: typeof AppMapRoute
   AppPermaRoute: typeof AppPermaRoute
   AppPhilosophyRoute: typeof AppPhilosophyRoute
   AppQuestsRoute: typeof AppQuestsRoute
+  AppRelationsRoute: typeof AppRelationsRoute
   AppStatsRoute: typeof AppStatsRoute
+  AppWorldmapRoute: typeof AppWorldmapRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
@@ -297,12 +317,13 @@ const AppRouteChildren: AppRouteChildren = {
   AppCampaignsRoute: AppCampaignsRoute,
   AppDesireRoute: AppDesireRoute,
   AppEcosystemRoute: AppEcosystemRoute,
-  AppLogRoute: AppLogRoute,
   AppMapRoute: AppMapRoute,
   AppPermaRoute: AppPermaRoute,
   AppPhilosophyRoute: AppPhilosophyRoute,
   AppQuestsRoute: AppQuestsRoute,
+  AppRelationsRoute: AppRelationsRoute,
   AppStatsRoute: AppStatsRoute,
+  AppWorldmapRoute: AppWorldmapRoute,
   AppIndexRoute: AppIndexRoute,
 }
 

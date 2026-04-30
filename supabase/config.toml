@@ -1,1 +1,4 @@
 project_id = "yqiibubqsztsdfudpyut"
+
+[functions.worldmap-ai]
+verify_jwt = false
