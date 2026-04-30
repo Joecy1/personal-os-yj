@@ -83,36 +83,6 @@ export type Database = {
         }
         Relationships: []
       }
-      design_log_entries: {
-        Row: {
-          body: string | null
-          created_at: string
-          date: string
-          id: string
-          title: string
-          type: string
-          user_id: string
-        }
-        Insert: {
-          body?: string | null
-          created_at?: string
-          date?: string
-          id?: string
-          title: string
-          type?: string
-          user_id: string
-        }
-        Update: {
-          body?: string | null
-          created_at?: string
-          date?: string
-          id?: string
-          title?: string
-          type?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       desire_cycles: {
         Row: {
           adjustment_direction: string | null
@@ -545,6 +515,167 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      relation_interactions: {
+        Row: {
+          created_at: string
+          how_i_felt: string
+          id: string
+          interaction_date: string
+          person_id: string
+          tags: string[]
+          updated_at: string
+          user_id: string
+          valence: string
+          want_to_say: string | null
+          what_happened: string
+        }
+        Insert: {
+          created_at?: string
+          how_i_felt?: string
+          id?: string
+          interaction_date?: string
+          person_id: string
+          tags?: string[]
+          updated_at?: string
+          user_id: string
+          valence?: string
+          want_to_say?: string | null
+          what_happened?: string
+        }
+        Update: {
+          created_at?: string
+          how_i_felt?: string
+          id?: string
+          interaction_date?: string
+          person_id?: string
+          tags?: string[]
+          updated_at?: string
+          user_id?: string
+          valence?: string
+          want_to_say?: string | null
+          what_happened?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "relation_interactions_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "relation_people"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      relation_people: {
+        Row: {
+          avatar_label: string | null
+          context: string | null
+          created_at: string
+          id: string
+          name: string
+          tags: string[]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_label?: string | null
+          context?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          tags?: string[]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_label?: string | null
+          context?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          tags?: string[]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      world_map_comparisons: {
+        Row: {
+          comparison_data: Json | null
+          created_at: string
+          id: string
+          initiator_id: string
+          partner_id: string
+          partner_label: string
+          user_id: string
+        }
+        Insert: {
+          comparison_data?: Json | null
+          created_at?: string
+          id?: string
+          initiator_id: string
+          partner_id: string
+          partner_label: string
+          user_id: string
+        }
+        Update: {
+          comparison_data?: Json | null
+          created_at?: string
+          id?: string
+          initiator_id?: string
+          partner_id?: string
+          partner_label?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "world_map_comparisons_initiator_id_fkey"
+            columns: ["initiator_id"]
+            isOneToOne: false
+            referencedRelation: "world_maps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "world_map_comparisons_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "world_maps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      world_maps: {
+        Row: {
+          created_at: string
+          id: string
+          map_data: Json | null
+          raw_text: string
+          status: string
+          topic: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          map_data?: Json | null
+          raw_text?: string
+          status?: string
+          topic: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          map_data?: Json | null
+          raw_text?: string
+          status?: string
+          topic?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
     }
     Views: {
