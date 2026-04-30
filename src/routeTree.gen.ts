@@ -18,7 +18,6 @@ import { Route as AppQuestsRouteImport } from './routes/_app/quests'
 import { Route as AppPhilosophyRouteImport } from './routes/_app/philosophy'
 import { Route as AppPermaRouteImport } from './routes/_app/perma'
 import { Route as AppMapRouteImport } from './routes/_app/map'
-import { Route as AppLogRouteImport } from './routes/_app/log'
 import { Route as AppEcosystemRouteImport } from './routes/_app/ecosystem'
 import { Route as AppDesireRouteImport } from './routes/_app/desire'
 import { Route as AppCampaignsRouteImport } from './routes/_app/campaigns'
@@ -67,11 +66,6 @@ const AppMapRoute = AppMapRouteImport.update({
   path: '/map',
   getParentRoute: () => AppRoute,
 } as any)
-const AppLogRoute = AppLogRouteImport.update({
-  id: '/log',
-  path: '/log',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppEcosystemRoute = AppEcosystemRouteImport.update({
   id: '/ecosystem',
   path: '/ecosystem',
@@ -95,7 +89,6 @@ export interface FileRoutesByFullPath {
   '/campaigns': typeof AppCampaignsRoute
   '/desire': typeof AppDesireRoute
   '/ecosystem': typeof AppEcosystemRoute
-  '/log': typeof AppLogRoute
   '/map': typeof AppMapRoute
   '/perma': typeof AppPermaRoute
   '/philosophy': typeof AppPhilosophyRoute
@@ -108,7 +101,6 @@ export interface FileRoutesByTo {
   '/campaigns': typeof AppCampaignsRoute
   '/desire': typeof AppDesireRoute
   '/ecosystem': typeof AppEcosystemRoute
-  '/log': typeof AppLogRoute
   '/map': typeof AppMapRoute
   '/perma': typeof AppPermaRoute
   '/philosophy': typeof AppPhilosophyRoute
@@ -124,7 +116,6 @@ export interface FileRoutesById {
   '/_app/campaigns': typeof AppCampaignsRoute
   '/_app/desire': typeof AppDesireRoute
   '/_app/ecosystem': typeof AppEcosystemRoute
-  '/_app/log': typeof AppLogRoute
   '/_app/map': typeof AppMapRoute
   '/_app/perma': typeof AppPermaRoute
   '/_app/philosophy': typeof AppPhilosophyRoute
@@ -141,7 +132,6 @@ export interface FileRouteTypes {
     | '/campaigns'
     | '/desire'
     | '/ecosystem'
-    | '/log'
     | '/map'
     | '/perma'
     | '/philosophy'
@@ -154,7 +144,6 @@ export interface FileRouteTypes {
     | '/campaigns'
     | '/desire'
     | '/ecosystem'
-    | '/log'
     | '/map'
     | '/perma'
     | '/philosophy'
@@ -169,7 +158,6 @@ export interface FileRouteTypes {
     | '/_app/campaigns'
     | '/_app/desire'
     | '/_app/ecosystem'
-    | '/_app/log'
     | '/_app/map'
     | '/_app/perma'
     | '/_app/philosophy'
@@ -249,13 +237,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMapRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/log': {
-      id: '/_app/log'
-      path: '/log'
-      fullPath: '/log'
-      preLoaderRoute: typeof AppLogRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/_app/ecosystem': {
       id: '/_app/ecosystem'
       path: '/ecosystem'
@@ -284,7 +265,6 @@ interface AppRouteChildren {
   AppCampaignsRoute: typeof AppCampaignsRoute
   AppDesireRoute: typeof AppDesireRoute
   AppEcosystemRoute: typeof AppEcosystemRoute
-  AppLogRoute: typeof AppLogRoute
   AppMapRoute: typeof AppMapRoute
   AppPermaRoute: typeof AppPermaRoute
   AppPhilosophyRoute: typeof AppPhilosophyRoute
@@ -297,7 +277,6 @@ const AppRouteChildren: AppRouteChildren = {
   AppCampaignsRoute: AppCampaignsRoute,
   AppDesireRoute: AppDesireRoute,
   AppEcosystemRoute: AppEcosystemRoute,
-  AppLogRoute: AppLogRoute,
   AppMapRoute: AppMapRoute,
   AppPermaRoute: AppPermaRoute,
   AppPhilosophyRoute: AppPhilosophyRoute,
