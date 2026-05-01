@@ -122,6 +122,38 @@ function StatCard({ label, value, sub, trend }: { label: string; value: string; 
   );
 }
 
+function WeeklyChart({ days }: { days: { date: string; label: string; count: number; xp: number }[] }) {
+  const maxXp = Math.max(1, ...days.map((d) => d.xp));
+  const todayStr = new Date().toISOString().slice(0, 10);
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 10, alignItems: "end" }}>
+      {days.map((d) => {
+        const h = Math.round((d.xp / maxXp) * 80);
+        const isToday = d.date === todayStr;
+        return (
+          <div key={d.date} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+            <div className="font-mono" style={{ fontSize: 10, color: "var(--ink-3)" }}>{d.xp || ""}</div>
+            <div style={{ width: "100%", height: 84, display: "flex", alignItems: "flex-end" }}>
+              <div
+                title={`${d.date} · ${d.count} quests · ${d.xp} XP`}
+                style={{
+                  width: "100%",
+                  height: Math.max(2, h),
+                  background: isToday ? "var(--amber)" : (d.xp > 0 ? "var(--ink)" : "var(--cream-3)"),
+                  borderRadius: 3,
+                  transition: "height 0.3s",
+                }}
+              />
+            </div>
+            <div className="font-mono" style={{ fontSize: 10, color: isToday ? "var(--amber)" : "var(--ink-4)", textTransform: "uppercase", letterSpacing: "0.06em" }}>{d.label}</div>
+            <div className="font-mono" style={{ fontSize: 9, color: "var(--ink-4)" }}>{d.count}</div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function NewQuestForm({ campaigns, onSave, onCancel }: { campaigns: { id: string; title: string }[]; onSave: (p: any) => void; onCancel: () => void }) {
   const [title, setTitle] = useState("");
   const [type, setType] = useState("daily");
