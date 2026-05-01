@@ -51,26 +51,6 @@ function Daily() {
     },
   });
 
-  const { data: questSpark } = useQuery({
-    queryKey: ["quest-spark", user?.id],
-    enabled: !!user,
-    queryFn: async () => {
-      const since = new Date(); since.setDate(since.getDate() - 6);
-      const sinceStr = since.toISOString().slice(0, 10);
-      const { data } = await supabase
-        .from("quest_completions")
-        .select("completed_at")
-        .gte("completed_at", sinceStr);
-      const counts: number[] = [];
-      for (let i = 6; i >= 0; i--) {
-        const d = new Date(); d.setDate(d.getDate() - i);
-        const ds = d.toISOString().slice(0, 10);
-        counts.push((data ?? []).filter((r) => r.completed_at === ds).length);
-      }
-      return counts;
-    },
-  });
-
   const { data: ecoSurfaced } = useQuery({
     queryKey: ["eco-surface", user?.id],
     enabled: !!user,
