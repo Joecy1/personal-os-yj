@@ -86,6 +86,7 @@ export type Database = {
       desire_cycles: {
         Row: {
           adjustment_direction: string | null
+          ambition_size: string | null
           buyer: string | null
           constraint_type: string | null
           consume_what: string | null
@@ -99,7 +100,11 @@ export type Database = {
           feedback_notes: string | null
           feedback_satisfaction: string | null
           id: string
+          idol_name: string | null
+          idol_traits: string | null
+          idol_why: string | null
           intensity: number | null
+          is_self_idol: boolean
           lacking: string | null
           loop_input: string | null
           loop_output: string | null
@@ -129,6 +134,7 @@ export type Database = {
         }
         Insert: {
           adjustment_direction?: string | null
+          ambition_size?: string | null
           buyer?: string | null
           constraint_type?: string | null
           consume_what?: string | null
@@ -142,7 +148,11 @@ export type Database = {
           feedback_notes?: string | null
           feedback_satisfaction?: string | null
           id?: string
+          idol_name?: string | null
+          idol_traits?: string | null
+          idol_why?: string | null
           intensity?: number | null
+          is_self_idol?: boolean
           lacking?: string | null
           loop_input?: string | null
           loop_output?: string | null
@@ -172,6 +182,7 @@ export type Database = {
         }
         Update: {
           adjustment_direction?: string | null
+          ambition_size?: string | null
           buyer?: string | null
           constraint_type?: string | null
           consume_what?: string | null
@@ -185,7 +196,11 @@ export type Database = {
           feedback_notes?: string | null
           feedback_satisfaction?: string | null
           id?: string
+          idol_name?: string | null
+          idol_traits?: string | null
+          idol_why?: string | null
           intensity?: number | null
+          is_self_idol?: boolean
           lacking?: string | null
           loop_input?: string | null
           loop_output?: string | null
