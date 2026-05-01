@@ -73,6 +73,18 @@ function QuestsPage() {
         <StatCard label="Level" value={`${stats?.level ?? 1}`} sub={levelTitle(stats?.level ?? 1)} />
       </div>
 
+      {weekly && (
+        <div className="pos-card" style={{ marginBottom: 24 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 14 }}>
+            <div className="card-label" style={{ marginBottom: 0 }}>Last 7 days — feedback loop</div>
+            <div style={{ display: "flex", gap: 18, fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--ink-3)" }}>
+              <span>{weekly.reduce((s, d) => s + d.count, 0)} quests · {weekly.reduce((s, d) => s + d.xp, 0)} XP</span>
+            </div>
+          </div>
+          <WeeklyChart days={weekly} />
+        </div>
+      )}
+
       {showNew && <NewQuestForm campaigns={campaigns ?? []} onCancel={() => setShowNew(false)} onSave={(p) => create.mutate(p)} />}
 
       {(["routine", "campaign", "daily"] as const).map((type) => (
