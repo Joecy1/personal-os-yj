@@ -34,6 +34,43 @@ function Daily() {
     queryFn: async () => (await supabase.from("perma_entries").select("*").eq("date", today()).maybeSingle()).data,
   });
 
+  const { data: anchor } = useQuery({
+    queryKey: ["desire-anchor", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("desire_cycles")
+        .select("id,desire,idol_name,idol_why,idol_traits,is_self_idol,ambition_size")
+        .eq("status", "active")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (!data) return null;
+      const hasAnchor = data.is_self_idol || (data.idol_name && data.idol_name.trim()) || (data.idol_why && data.idol_why.trim());
+      return hasAnchor ? data : null;
+    },
+  });
+
+  const { data: questSpark } = useQuery({
+    queryKey: ["quest-spark", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const since = new Date(); since.setDate(since.getDate() - 6);
+      const sinceStr = since.toISOString().slice(0, 10);
+      const { data } = await supabase
+        .from("quest_completions")
+        .select("completed_at")
+        .gte("completed_at", sinceStr);
+      const counts: number[] = [];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(); d.setDate(d.getDate() - i);
+        const ds = d.toISOString().slice(0, 10);
+        counts.push((data ?? []).filter((r) => r.completed_at === ds).length);
+      }
+      return counts;
+    },
+  });
+
   const { data: ecoSurfaced } = useQuery({
     queryKey: ["eco-surface", user?.id],
     enabled: !!user,
