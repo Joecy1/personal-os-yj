@@ -24,6 +24,33 @@ function QuestsPage() {
     queryFn: async () => (await supabase.from("campaigns").select("id,title").eq("status", "active")).data ?? [],
   });
 
+  const { data: weekly } = useQuery({
+    queryKey: ["quests-weekly", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const since = new Date(); since.setDate(since.getDate() - 6);
+      const sinceStr = since.toISOString().slice(0, 10);
+      const [completionsRes, questsRes] = await Promise.all([
+        supabase.from("quest_completions").select("quest_id, completed_at").gte("completed_at", sinceStr),
+        supabase.from("quests").select("id, xp_value"),
+      ]);
+      const xpById = new Map((questsRes.data ?? []).map((q) => [q.id, q.xp_value]));
+      const days: { date: string; label: string; count: number; xp: number }[] = [];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(); d.setDate(d.getDate() - i);
+        const ds = d.toISOString().slice(0, 10);
+        const todays = (completionsRes.data ?? []).filter((c) => c.completed_at === ds);
+        days.push({
+          date: ds,
+          label: d.toLocaleDateString(undefined, { weekday: "short" })[0],
+          count: todays.length,
+          xp: todays.reduce((s, c) => s + (xpById.get(c.quest_id) ?? 0), 0),
+        });
+      }
+      return days;
+    },
+  });
+
   const create = useMutation({
     mutationFn: async (p: any) => { await supabase.from("quests").insert({ user_id: user!.id, ...p }); },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["quests"] }); toast.success("Quest added"); setShowNew(false); },
