@@ -147,6 +147,27 @@ function Daily() {
         />
       </div>
 
+      {anchor && (
+        <div style={{ background: "var(--purple-bg)", border: "1px solid rgba(90,68,168,0.2)", borderRadius: 10, padding: "16px 20px", marginBottom: 16 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--purple)" }}>Anchor — who you're becoming</div>
+            {anchor.ambition_size && <span className="tag tag-purple">{anchor.ambition_size}</span>}
+          </div>
+          <Link to="/desire" style={{ display: "block", textDecoration: "none", color: "inherit" }}>
+            <div style={{ fontSize: 14, color: "var(--ink)", lineHeight: 1.5, fontStyle: "italic" }} className="font-serif">
+              {anchor.is_self_idol ? "My future self" : (anchor.idol_name || "—")}
+              {anchor.idol_why ? <span style={{ fontStyle: "normal", fontFamily: "var(--font-sans)", color: "var(--ink-2)" }}> — {anchor.idol_why}</span> : null}
+            </div>
+            {anchor.idol_traits && (
+              <div style={{ fontSize: 11, color: "var(--ink-3)", marginTop: 6, fontFamily: "var(--font-mono)", letterSpacing: "0.04em" }}>traits to absorb · {anchor.idol_traits}</div>
+            )}
+            {anchor.desire && (
+              <div style={{ fontSize: 11, color: "var(--ink-4)", marginTop: 4 }}>serving: {anchor.desire.slice(0, 100)}{anchor.desire.length > 100 ? "…" : ""}</div>
+            )}
+          </Link>
+        </div>
+      )}
+
       <div style={{ background: "var(--green-bg)", border: "1px solid rgba(58,125,68,0.2)", borderRadius: 10, padding: "16px 20px", marginBottom: 16 }}>
         <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--green)", marginBottom: 8 }}>From your ecosystem — resonant today</div>
         {(ecoSurfaced?.length ?? 0) === 0 ? (
