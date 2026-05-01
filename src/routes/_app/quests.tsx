@@ -24,6 +24,33 @@ function QuestsPage() {
     queryFn: async () => (await supabase.from("campaigns").select("id,title").eq("status", "active")).data ?? [],
   });
 
+  const { data: weekly } = useQuery({
+    queryKey: ["quests-weekly", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const since = new Date(); since.setDate(since.getDate() - 6);
+      const sinceStr = since.toISOString().slice(0, 10);
+      const [completionsRes, questsRes] = await Promise.all([
+        supabase.from("quest_completions").select("quest_id, completed_at").gte("completed_at", sinceStr),
+        supabase.from("quests").select("id, xp_value"),
+      ]);
+      const xpById = new Map((questsRes.data ?? []).map((q) => [q.id, q.xp_value]));
+      const days: { date: string; label: string; count: number; xp: number }[] = [];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(); d.setDate(d.getDate() - i);
+        const ds = d.toISOString().slice(0, 10);
+        const todays = (completionsRes.data ?? []).filter((c) => c.completed_at === ds);
+        days.push({
+          date: ds,
+          label: d.toLocaleDateString(undefined, { weekday: "short" })[0],
+          count: todays.length,
+          xp: todays.reduce((s, c) => s + (xpById.get(c.quest_id) ?? 0), 0),
+        });
+      }
+      return days;
+    },
+  });
+
   const create = useMutation({
     mutationFn: async (p: any) => { await supabase.from("quests").insert({ user_id: user!.id, ...p }); },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["quests"] }); toast.success("Quest added"); setShowNew(false); },
@@ -45,6 +72,18 @@ function QuestsPage() {
         <StatCard label="XP today" value={`${xpToday}`} sub="of 500 target" />
         <StatCard label="Level" value={`${stats?.level ?? 1}`} sub={levelTitle(stats?.level ?? 1)} />
       </div>
+
+      {weekly && (
+        <div className="pos-card" style={{ marginBottom: 24 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 14 }}>
+            <div className="card-label" style={{ marginBottom: 0 }}>Last 7 days — feedback loop</div>
+            <div style={{ display: "flex", gap: 18, fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--ink-3)" }}>
+              <span>{weekly.reduce((s, d) => s + d.count, 0)} quests · {weekly.reduce((s, d) => s + d.xp, 0)} XP</span>
+            </div>
+          </div>
+          <WeeklyChart days={weekly} />
+        </div>
+      )}
 
       {showNew && <NewQuestForm campaigns={campaigns ?? []} onCancel={() => setShowNew(false)} onSave={(p) => create.mutate(p)} />}
 
@@ -79,6 +118,38 @@ function StatCard({ label, value, sub, trend }: { label: string; value: string; 
       <div className="font-serif" style={{ fontSize: 26, fontWeight: 700, lineHeight: 1 }}>{value}</div>
       <div style={{ fontSize: 11, color: "var(--ink-3)", marginTop: 4 }}>{sub}</div>
       {trend && <div className="font-mono" style={{ fontSize: 11, marginTop: 6, color: "var(--teal)" }}>{trend}</div>}
+    </div>
+  );
+}
+
+function WeeklyChart({ days }: { days: { date: string; label: string; count: number; xp: number }[] }) {
+  const maxXp = Math.max(1, ...days.map((d) => d.xp));
+  const todayStr = new Date().toISOString().slice(0, 10);
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 10, alignItems: "end" }}>
+      {days.map((d) => {
+        const h = Math.round((d.xp / maxXp) * 80);
+        const isToday = d.date === todayStr;
+        return (
+          <div key={d.date} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+            <div className="font-mono" style={{ fontSize: 10, color: "var(--ink-3)" }}>{d.xp || ""}</div>
+            <div style={{ width: "100%", height: 84, display: "flex", alignItems: "flex-end" }}>
+              <div
+                title={`${d.date} · ${d.count} quests · ${d.xp} XP`}
+                style={{
+                  width: "100%",
+                  height: Math.max(2, h),
+                  background: isToday ? "var(--amber)" : (d.xp > 0 ? "var(--ink)" : "var(--cream-3)"),
+                  borderRadius: 3,
+                  transition: "height 0.3s",
+                }}
+              />
+            </div>
+            <div className="font-mono" style={{ fontSize: 10, color: isToday ? "var(--amber)" : "var(--ink-4)", textTransform: "uppercase", letterSpacing: "0.06em" }}>{d.label}</div>
+            <div className="font-mono" style={{ fontSize: 9, color: "var(--ink-4)" }}>{d.count}</div>
+          </div>
+        );
+      })}
     </div>
   );
 }

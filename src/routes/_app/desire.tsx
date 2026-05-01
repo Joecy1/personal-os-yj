@@ -57,6 +57,57 @@ function DesirePage() {
     <Module>
       <PageHeader title="Desire engine" subtitle="Capture · Decompose · Map · Couple · Expand · Feedback · Meta" actions={<button className="pos-btn" onClick={newCycle}>+ New cycle</button>} />
 
+      {/* Ambition + Idol prelude — frames the desire before phases */}
+      <div style={{ background: "var(--purple-bg)", border: "1px solid rgba(90,68,168,0.2)", borderRadius: 10, padding: "18px 22px", marginBottom: 24 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--purple)" }}>Ambition & Anchor</div>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--ink-4)" }}>The bigger frame this desire serves</div>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <div>
+            <label className="pos-label">Ambition size</label>
+            <Pills options={["Small", "Medium", "Large", "Life-defining"]} value={draft.ambition_size} onChange={(v) => { setField("ambition_size", v); setTimeout(blur, 0); }} />
+            <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 10 }}>
+              <input
+                type="checkbox"
+                id="is-self-idol"
+                checked={!!draft.is_self_idol}
+                onChange={(e) => { const v = e.target.checked; setDraft({ ...draft, is_self_idol: v, idol_name: v ? "My future self" : (draft.idol_name === "My future self" ? "" : draft.idol_name) }); setTimeout(blur, 0); }}
+              />
+              <label htmlFor="is-self-idol" style={{ fontSize: 12, color: "var(--ink-2)" }}>Anchor to my future self (no external idol)</label>
+            </div>
+          </div>
+          <div>
+            <label className="pos-label">Idol — who do you emulate?</label>
+            <input
+              className="pos-input"
+              value={draft.idol_name ?? ""}
+              onChange={(e) => setField("idol_name", e.target.value)}
+              onBlur={blur}
+              placeholder={draft.is_self_idol ? "My future self" : "A real person worth emulating"}
+              disabled={!!draft.is_self_idol}
+            />
+            <label className="pos-label" style={{ marginTop: 12 }}>Why this anchor?</label>
+            <textarea
+              className="pos-input"
+              rows={2}
+              value={draft.idol_why ?? ""}
+              onChange={(e) => setField("idol_why", e.target.value)}
+              onBlur={blur}
+              placeholder="What about them reminds you of who you want to become?"
+            />
+            <label className="pos-label" style={{ marginTop: 12 }}>Traits to absorb</label>
+            <input
+              className="pos-input"
+              value={draft.idol_traits ?? ""}
+              onChange={(e) => setField("idol_traits", e.target.value)}
+              onBlur={blur}
+              placeholder="e.g. patience, range, taste, calm under load"
+            />
+          </div>
+        </div>
+      </div>
+
       <div style={{ display: "flex", gap: 6, marginBottom: 24, flexWrap: "wrap" }}>
         {PHASES.map((p, i) => (
           <button key={p} onClick={() => setPhase(i + 1)} className="opt-pill" style={phase === i + 1 ? { background: "var(--ink)", color: "var(--cream)", borderColor: "var(--ink)" } : {}}>{p}</button>
