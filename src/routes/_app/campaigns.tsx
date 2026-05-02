@@ -4,6 +4,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { Module, PageHeader, EmptyState } from "@/components/Module";
+import { FrameworkChips } from "@/components/FrameworkPicker";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/campaigns")({ component: CampaignsPage });
@@ -33,6 +34,13 @@ function CampaignsPage() {
       const ms = [...(campaign.milestones as Milestone[])];
       ms[idx] = { ...ms[idx], complete: !ms[idx].complete };
       await supabase.from("campaigns").update({ milestones: ms }).eq("id", campaign.id);
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["campaigns-all"] }),
+  });
+
+  const updateFrameworks = useMutation({
+    mutationFn: async ({ id, slugs }: { id: string; slugs: string[] }) => {
+      await supabase.from("campaigns").update({ frameworks_used: slugs }).eq("id", id);
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["campaigns-all"] }),
   });
