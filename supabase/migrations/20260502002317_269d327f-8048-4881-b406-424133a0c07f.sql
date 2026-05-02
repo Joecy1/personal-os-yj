@@ -1,0 +1,1 @@
+ALTER TABLE public.desire_cycles ADD COLUMN IF NOT EXISTS decompose_framework text;

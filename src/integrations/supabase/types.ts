@@ -17,6 +17,7 @@ export type Database = {
       campaigns: {
         Row: {
           created_at: string
+          frameworks_used: string[]
           id: string
           milestones: Json
           status: string
@@ -28,6 +29,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          frameworks_used?: string[]
           id?: string
           milestones?: Json
           status?: string
@@ -39,6 +41,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          frameworks_used?: string[]
           id?: string
           milestones?: Json
           status?: string
@@ -56,6 +59,7 @@ export type Database = {
           created_at: string
           date: string
           focus_intention: string | null
+          framework_used_today: string | null
           id: string
           updated_at: string
           user_id: string
@@ -66,6 +70,7 @@ export type Database = {
           created_at?: string
           date?: string
           focus_intention?: string | null
+          framework_used_today?: string | null
           id?: string
           updated_at?: string
           user_id: string
@@ -76,6 +81,7 @@ export type Database = {
           created_at?: string
           date?: string
           focus_intention?: string | null
+          framework_used_today?: string | null
           id?: string
           updated_at?: string
           user_id?: string
@@ -92,6 +98,7 @@ export type Database = {
           consume_what: string | null
           created_at: string
           current_phase: number
+          decompose_framework: string | null
           desire: string | null
           desire_type: string | null
           diagnosis: string | null
@@ -140,6 +147,7 @@ export type Database = {
           consume_what?: string | null
           created_at?: string
           current_phase?: number
+          decompose_framework?: string | null
           desire?: string | null
           desire_type?: string | null
           diagnosis?: string | null
@@ -188,6 +196,7 @@ export type Database = {
           consume_what?: string | null
           created_at?: string
           current_phase?: number
+          decompose_framework?: string | null
           desire?: string | null
           desire_type?: string | null
           diagnosis?: string | null
@@ -266,6 +275,60 @@ export type Database = {
           tags?: string[]
           title?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      knowledge_frameworks: {
+        Row: {
+          author: string
+          core_concepts: Json
+          created_at: string
+          description: string
+          difficulty: string
+          domain: string
+          how_to_apply: Json
+          id: string
+          slug: string
+          source_title: string
+          source_year: number | null
+          test_questions: Json
+          title: string
+          what_its_for: string
+          when_it_fails: string
+        }
+        Insert: {
+          author: string
+          core_concepts?: Json
+          created_at?: string
+          description?: string
+          difficulty?: string
+          domain: string
+          how_to_apply?: Json
+          id?: string
+          slug: string
+          source_title: string
+          source_year?: number | null
+          test_questions?: Json
+          title: string
+          what_its_for?: string
+          when_it_fails?: string
+        }
+        Update: {
+          author?: string
+          core_concepts?: Json
+          created_at?: string
+          description?: string
+          difficulty?: string
+          domain?: string
+          how_to_apply?: Json
+          id?: string
+          slug?: string
+          source_title?: string
+          source_year?: number | null
+          test_questions?: Json
+          title?: string
+          what_its_for?: string
+          when_it_fails?: string
         }
         Relationships: []
       }
@@ -614,6 +677,98 @@ export type Database = {
         }
         Relationships: []
       }
+      user_custom_frameworks: {
+        Row: {
+          author: string | null
+          core_concepts: Json
+          created_at: string
+          description: string
+          domain: string
+          id: string
+          personal_notes: string | null
+          source_title: string | null
+          title: string
+          updated_at: string
+          user_id: string
+          when_to_use: string
+        }
+        Insert: {
+          author?: string | null
+          core_concepts?: Json
+          created_at?: string
+          description?: string
+          domain?: string
+          id?: string
+          personal_notes?: string | null
+          source_title?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+          when_to_use?: string
+        }
+        Update: {
+          author?: string | null
+          core_concepts?: Json
+          created_at?: string
+          description?: string
+          domain?: string
+          id?: string
+          personal_notes?: string | null
+          source_title?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+          when_to_use?: string
+        }
+        Relationships: []
+      }
+      user_frameworks: {
+        Row: {
+          created_at: string
+          framework_id: string
+          id: string
+          notes: string | null
+          status: string
+          test_attempts: number
+          test_score: number | null
+          unlocked_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          framework_id: string
+          id?: string
+          notes?: string | null
+          status?: string
+          test_attempts?: number
+          test_score?: number | null
+          unlocked_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          framework_id?: string
+          id?: string
+          notes?: string | null
+          status?: string
+          test_attempts?: number
+          test_score?: number | null
+          unlocked_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_frameworks_framework_id_fkey"
+            columns: ["framework_id"]
+            isOneToOne: false
+            referencedRelation: "knowledge_frameworks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       world_map_comparisons: {
         Row: {
           comparison_data: Json | null
@@ -662,6 +817,7 @@ export type Database = {
       world_maps: {
         Row: {
           created_at: string
+          frameworks_used: string[]
           id: string
           map_data: Json | null
           raw_text: string
@@ -672,6 +828,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          frameworks_used?: string[]
           id?: string
           map_data?: Json | null
           raw_text?: string
@@ -682,6 +839,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          frameworks_used?: string[]
           id?: string
           map_data?: Json | null
           raw_text?: string
