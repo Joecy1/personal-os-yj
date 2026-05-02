@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth";
 import { greeting, longDate, today, shortDate } from "@/lib/date";
 import { useQuests, useToggleQuest } from "@/lib/queries";
 import { Module, SectionHeader } from "@/components/Module";
+import { FrameworkSelect } from "@/components/FrameworkPicker";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/")({ component: Daily });
@@ -259,6 +260,12 @@ function Daily() {
             <textarea className="pos-input" rows={2} value={wentWell} onChange={(e) => setWentWell(e.target.value)} onBlur={() => { saveReview.mutate({}); toast.success("Saved"); }} placeholder="Three things…" />
             <label className="pos-label" style={{ marginTop: 12 }}>What to carry forward?</label>
             <textarea className="pos-input" rows={2} value={carry} onChange={(e) => setCarry(e.target.value)} onBlur={() => { saveReview.mutate({}); toast.success("Saved"); }} placeholder="One intention…" />
+            <label className="pos-label" style={{ marginTop: 12 }}>Which framework did you use today?</label>
+            <FrameworkSelect
+              value={review?.framework_used_today ?? null}
+              onChange={(slug) => { saveReview.mutate({ framework_used_today: slug ?? "" }); }}
+              placeholder="— none today —"
+            />
           </div>
         </div>
       </div>
