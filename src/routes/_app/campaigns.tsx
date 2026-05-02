@@ -86,6 +86,14 @@ function CampaignsPage() {
                     </div>
                   ))}
                 </div>
+                <div style={{ marginTop: 16, paddingTop: 14, borderTop: "1px solid var(--rule)" }}>
+                  <div className="card-label" style={{ marginBottom: 8 }}>Frameworks to apply</div>
+                  <FrameworkChips
+                    selectedSlugs={(c.frameworks_used as string[] | null) ?? []}
+                    onChange={(slugs) => updateFrameworks.mutate({ id: c.id, slugs })}
+                    emptyHint="No frameworks unlocked yet."
+                  />
+                </div>
               </div>
             );
           })}
