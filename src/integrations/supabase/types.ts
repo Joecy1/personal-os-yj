@@ -98,6 +98,7 @@ export type Database = {
           consume_what: string | null
           created_at: string
           current_phase: number
+          decompose_framework: string | null
           desire: string | null
           desire_type: string | null
           diagnosis: string | null
@@ -146,6 +147,7 @@ export type Database = {
           consume_what?: string | null
           created_at?: string
           current_phase?: number
+          decompose_framework?: string | null
           desire?: string | null
           desire_type?: string | null
           diagnosis?: string | null
@@ -194,6 +196,7 @@ export type Database = {
           consume_what?: string | null
           created_at?: string
           current_phase?: number
+          decompose_framework?: string | null
           desire?: string | null
           desire_type?: string | null
           diagnosis?: string | null
