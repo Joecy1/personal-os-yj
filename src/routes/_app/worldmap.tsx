@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth";
 import { Module, PageHeader, SectionHeader, EmptyState } from "@/components/Module";
 import { shortDate } from "@/lib/date";
 import { MapRenderer, type MapData } from "@/components/MapRenderer";
+import { FrameworkChips } from "@/components/FrameworkPicker";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/worldmap")({ component: WorldMapPage });
@@ -154,13 +155,14 @@ function CreatePanel({ onCancel, onCreated }: { onCancel: () => void; onCreated:
   const { user } = useAuth();
   const [topic, setTopic] = useState("");
   const [raw, setRaw] = useState("");
+  const [frameworks, setFrameworks] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
 
   const submit = async () => {
     if (!user || !topic.trim() || !raw.trim()) return;
     setBusy(true);
     try {
-      const ins = await supabase.from("world_maps").insert({ user_id: user.id, topic: topic.trim(), raw_text: raw.trim(), status: "draft" }).select("id").single();
+      const ins = await supabase.from("world_maps").insert({ user_id: user.id, topic: topic.trim(), raw_text: raw.trim(), status: "draft", frameworks_used: frameworks }).select("id").single();
       if (ins.error || !ins.data) throw new Error(ins.error?.message ?? "insert failed");
       const map_data = await callExtract(raw.trim(), topic.trim());
       await supabase.from("world_maps").update({ map_data: map_data as any, status: "complete" }).eq("id", ins.data.id);
@@ -183,6 +185,8 @@ function CreatePanel({ onCancel, onCreated }: { onCancel: () => void; onCreated:
         <div className="font-mono" style={{ fontSize: 11, color: "var(--ink-4)", marginTop: 6 }}>
           The more honest and specific you are, the more the map will reveal. You are the only one who sees this.
         </div>
+        <label className="pos-label" style={{ marginTop: 14 }}>Any framework shaping how you see this?</label>
+        <FrameworkChips selectedSlugs={frameworks} onChange={setFrameworks} emptyHint="None unlocked yet — optional." />
         <div style={{ marginTop: 18 }}>
           <button className="pos-btn primary" disabled={busy || !topic.trim() || !raw.trim()} onClick={submit}>
             {busy ? "Reading your mental model…" : "Generate my map →"}
