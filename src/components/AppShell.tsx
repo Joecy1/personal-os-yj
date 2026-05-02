@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { longDate } from "@/lib/date";
 
-type BadgeKey = "campaigns" | "quests" | "ecosystem" | "relations" | "worldmaps";
+type BadgeKey = "campaigns" | "quests" | "ecosystem" | "relations" | "worldmaps" | "frameworks";
 const sections: Array<{ label: string; items: Array<{ to: string; label: string; dot: string; badgeKey?: BadgeKey }> }> = [
   { label: "Today", items: [{ to: "/", label: "Daily session", dot: "var(--amber)" }] },
   {
@@ -14,6 +14,12 @@ const sections: Array<{ label: string; items: Array<{ to: string; label: string;
       { to: "/quests", label: "Daily quests", dot: "var(--teal)", badgeKey: "quests" },
       { to: "/desire", label: "Desire engine", dot: "var(--amber)" },
       { to: "/stats", label: "Stats", dot: "var(--teal)" },
+    ],
+  },
+  {
+    label: "Knowledge",
+    items: [
+      { to: "/knowledge", label: "Knowledge vault", dot: "var(--amber)", badgeKey: "frameworks" },
     ],
   },
   {
@@ -43,17 +49,18 @@ function useBadges(userId: string | undefined) {
     enabled: !!userId,
     queryFn: async () => {
       const today = new Date().toISOString().slice(0, 10);
-      const [c, q, e, comps, rp, wm] = await Promise.all([
+      const [c, q, e, comps, rp, wm, fw] = await Promise.all([
         supabase.from("campaigns").select("id", { count: "exact", head: true }).eq("status", "active"),
         supabase.from("quests").select("id").eq("archived", false),
         supabase.from("ecosystem_entries").select("id", { count: "exact", head: true }),
         supabase.from("quest_completions").select("quest_id").eq("completed_at", today),
         supabase.from("relation_people").select("id", { count: "exact", head: true }),
         supabase.from("world_maps").select("id", { count: "exact", head: true }).eq("status", "complete"),
+        supabase.from("user_frameworks").select("id", { count: "exact", head: true }).eq("status", "unlocked"),
       ]);
       const completedToday = new Set((comps.data ?? []).map((r) => r.quest_id));
       const incomplete = (q.data ?? []).filter((qq) => !completedToday.has(qq.id)).length;
-      return { campaigns: c.count ?? 0, quests: incomplete, ecosystem: e.count ?? 0, relations: rp.count ?? 0, worldmaps: wm.count ?? 0 };
+      return { campaigns: c.count ?? 0, quests: incomplete, ecosystem: e.count ?? 0, relations: rp.count ?? 0, worldmaps: wm.count ?? 0, frameworks: fw.count ?? 0 };
     },
   });
 }
