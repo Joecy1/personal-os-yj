@@ -132,6 +132,15 @@ function DesirePage() {
             </div>
             <Field label="What's lacking"><textarea className="pos-input" rows={2} value={draft.lacking ?? ""} onChange={(e) => setField("lacking", e.target.value)} onBlur={blur} /></Field>
             <Field label="Constraint type"><Pills options={["Money", "Time", "Skill", "Network", "Access"]} value={draft.constraint_type} onChange={(v) => { setField("constraint_type", v); setTimeout(blur, 0); }} /></Field>
+            <div>
+              <label className="pos-label">Which framework might help you decompose this clearly?</label>
+              <FrameworkSelect
+                value={draft.decompose_framework ?? null}
+                onChange={(slug) => { setField("decompose_framework", slug ?? ""); setTimeout(blur, 0); }}
+                domainFilter="problem-solving"
+                placeholder="— pick a problem-solving framework —"
+              />
+            </div>
           </>}
           {phase === 3 && <>
             <Field label="Production output"><textarea className="pos-input" rows={2} value={draft.production_output ?? ""} onChange={(e) => setField("production_output", e.target.value)} onBlur={blur} /></Field>
