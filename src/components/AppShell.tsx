@@ -43,6 +43,7 @@ const sections: Array<{ label: string; items: Array<{ to: string; label: string;
     items: [
       { to: "/map", label: "Personal map", dot: "var(--purple)" },
       { to: "/philosophy", label: "Philosophy", dot: "var(--purple)" },
+      { to: "/manifesto", label: "Manifesto", dot: "var(--ink)" },
     ],
   },
 ];
