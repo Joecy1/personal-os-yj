@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { Module, PageHeader, EmptyState } from "@/components/Module";
 import { FrameworkChips } from "@/components/FrameworkPicker";
+import { CAMPAIGN_TEMPLATES, type CampaignTemplate } from "@/lib/campaign-templates";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/campaigns")({ component: CampaignsPage });
@@ -15,6 +16,7 @@ function CampaignsPage() {
   const { user } = useAuth();
   const qc = useQueryClient();
   const [showNew, setShowNew] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
 
   const { data: campaigns } = useQuery({
     queryKey: ["campaigns-all", user?.id],
@@ -23,11 +25,21 @@ function CampaignsPage() {
   });
 
   const create = useMutation({
-    mutationFn: async (payload: { title: string; win_condition: string; milestones: Milestone[]; tags: string[] }) => {
+    mutationFn: async (payload: { title: string; win_condition: string; milestones: Milestone[]; tags: string[]; frameworks_used?: string[] }) => {
       await supabase.from("campaigns").insert({ user_id: user!.id, ...payload, status: "active" });
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["campaigns-all"] }); qc.invalidateQueries({ queryKey: ["campaigns"] }); qc.invalidateQueries({ queryKey: ["sidebar-badges"] }); toast.success("Campaign created"); setShowNew(false); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["campaigns-all"] }); qc.invalidateQueries({ queryKey: ["campaigns"] }); qc.invalidateQueries({ queryKey: ["sidebar-badges"] }); toast.success("Campaign created"); setShowNew(false); setShowTemplates(false); },
   });
+
+  const createFromTemplate = (t: CampaignTemplate) => {
+    create.mutate({
+      title: t.title,
+      win_condition: t.win_condition,
+      milestones: t.milestones.map((m) => ({ ...m, id: crypto.randomUUID() })),
+      tags: t.tags,
+      frameworks_used: t.framework_slugs,
+    });
+  };
 
   const toggleMilestone = useMutation({
     mutationFn: async ({ campaign, idx }: { campaign: any; idx: number }) => {
@@ -48,8 +60,29 @@ function CampaignsPage() {
   return (
     <Module>
       <PageHeader title="Campaigns" subtitle="Long-horizon goals with milestones and win conditions" actions={
-        <button className="pos-btn primary" onClick={() => setShowNew(true)}>+ New campaign</button>
+        <>
+          <button className="pos-btn" onClick={() => { setShowTemplates((v) => !v); setShowNew(false); }}>+ From template</button>
+          <button className="pos-btn primary" onClick={() => { setShowNew(true); setShowTemplates(false); }}>+ New campaign</button>
+        </>
       } />
+
+      {showTemplates && (
+        <div className="pos-card" style={{ marginBottom: 24 }}>
+          <div className="card-label">Pick a template</div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 8 }}>
+            {CAMPAIGN_TEMPLATES.map((t) => (
+              <div key={t.key} style={{ padding: 14, background: "#fff", border: "1px solid var(--rule)", borderRadius: 8 }}>
+                <div style={{ fontSize: 14, fontWeight: 500, color: "var(--ink)", marginBottom: 4 }}>{t.title}</div>
+                <div style={{ fontSize: 12, color: "var(--ink-3)", marginBottom: 8 }}>{t.blurb}</div>
+                <div style={{ fontSize: 11, color: "var(--ink-4)", fontFamily: "var(--font-mono)", marginBottom: 10 }}>
+                  {t.milestones.length} milestones · {t.tags.join(" · ")}
+                </div>
+                <button className="pos-btn primary" onClick={() => createFromTemplate(t)}>Use template</button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {showNew && <NewCampaignForm onCancel={() => setShowNew(false)} onSave={(p) => create.mutate(p)} />}
 

@@ -7,6 +7,7 @@ import { greeting, longDate, today, shortDate } from "@/lib/date";
 import { useQuests, useToggleQuest } from "@/lib/queries";
 import { Module, SectionHeader } from "@/components/Module";
 import { FrameworkSelect } from "@/components/FrameworkPicker";
+import { CaptureCard } from "@/components/EsmCapture";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/")({ component: Daily });
@@ -88,6 +89,21 @@ function Daily() {
     },
   });
 
+  const { data: esmToday } = useQuery({
+    queryKey: ["esm-today", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const start = new Date(); start.setHours(0, 0, 0, 0);
+      const { data } = await supabase
+        .from("esm_entries")
+        .select("*")
+        .gte("captured_at", start.toISOString())
+        .order("captured_at", { ascending: false });
+      return data ?? [];
+    },
+  });
+  const [showCapture, setShowCapture] = useState(false);
+
   const [focus, setFocus] = useState("");
   const [wentWell, setWentWell] = useState("");
   const [carry, setCarry] = useState("");
@@ -148,6 +164,33 @@ function Daily() {
           </Link>
         </div>
       )}
+
+      <div style={{ background: "var(--coral-bg)", border: "1px solid rgba(184,74,46,0.2)", borderRadius: 10, padding: "14px 18px", marginBottom: 16 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--coral)" }}>Emotion pulse</div>
+            <div style={{ fontSize: 13, color: "var(--ink-2)", marginTop: 4 }}>
+              {(esmToday?.length ?? 0) === 0
+                ? "No check-ins yet today."
+                : <>
+                    <strong style={{ color: "var(--ink)" }}>{esmToday!.length}</strong> today · last:{" "}
+                    <strong style={{ color: "var(--ink)" }}>{esmToday![0].primary_emotion}</strong>
+                    {esmToday![0].context ? ` — ${esmToday![0].context}` : ""}
+                  </>}
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 6 }}>
+            <button className="pos-btn" onClick={() => setShowCapture((s) => !s)}>{showCapture ? "Close" : "+ Log"}</button>
+            <Link to="/diary" className="pos-btn">Diary →</Link>
+          </div>
+        </div>
+        {showCapture && (
+          <div style={{ marginTop: 12 }}>
+            <CaptureCard compact onSaved={() => { setShowCapture(false); qc.invalidateQueries({ queryKey: ["esm-today"] }); }} />
+          </div>
+        )}
+      </div>
+
 
       <div style={{ background: "var(--green-bg)", border: "1px solid rgba(58,125,68,0.2)", borderRadius: 10, padding: "16px 20px", marginBottom: 16 }}>
         <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--green)", marginBottom: 8 }}>From your ecosystem — resonant today</div>
