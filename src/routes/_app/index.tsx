@@ -7,6 +7,7 @@ import { greeting, longDate, today, shortDate } from "@/lib/date";
 import { useQuests, useToggleQuest } from "@/lib/queries";
 import { Module, SectionHeader } from "@/components/Module";
 import { FrameworkSelect } from "@/components/FrameworkPicker";
+import { CaptureCard } from "./diary";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/")({ component: Daily });
