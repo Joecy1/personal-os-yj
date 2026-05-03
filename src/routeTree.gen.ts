@@ -21,6 +21,7 @@ import { Route as AppProgressRouteImport } from './routes/_app/progress'
 import { Route as AppPhilosophyRouteImport } from './routes/_app/philosophy'
 import { Route as AppPermaRouteImport } from './routes/_app/perma'
 import { Route as AppMapRouteImport } from './routes/_app/map'
+import { Route as AppManifestoRouteImport } from './routes/_app/manifesto'
 import { Route as AppKnowledgeRouteImport } from './routes/_app/knowledge'
 import { Route as AppEcosystemRouteImport } from './routes/_app/ecosystem'
 import { Route as AppDiaryRouteImport } from './routes/_app/diary'
@@ -86,6 +87,11 @@ const AppMapRoute = AppMapRouteImport.update({
   path: '/map',
   getParentRoute: () => AppRoute,
 } as any)
+const AppManifestoRoute = AppManifestoRouteImport.update({
+  id: '/manifesto',
+  path: '/manifesto',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppKnowledgeRoute = AppKnowledgeRouteImport.update({
   id: '/knowledge',
   path: '/knowledge',
@@ -121,6 +127,7 @@ export interface FileRoutesByFullPath {
   '/diary': typeof AppDiaryRoute
   '/ecosystem': typeof AppEcosystemRoute
   '/knowledge': typeof AppKnowledgeRoute
+  '/manifesto': typeof AppManifestoRoute
   '/map': typeof AppMapRoute
   '/perma': typeof AppPermaRoute
   '/philosophy': typeof AppPhilosophyRoute
@@ -138,6 +145,7 @@ export interface FileRoutesByTo {
   '/diary': typeof AppDiaryRoute
   '/ecosystem': typeof AppEcosystemRoute
   '/knowledge': typeof AppKnowledgeRoute
+  '/manifesto': typeof AppManifestoRoute
   '/map': typeof AppMapRoute
   '/perma': typeof AppPermaRoute
   '/philosophy': typeof AppPhilosophyRoute
@@ -158,6 +166,7 @@ export interface FileRoutesById {
   '/_app/diary': typeof AppDiaryRoute
   '/_app/ecosystem': typeof AppEcosystemRoute
   '/_app/knowledge': typeof AppKnowledgeRoute
+  '/_app/manifesto': typeof AppManifestoRoute
   '/_app/map': typeof AppMapRoute
   '/_app/perma': typeof AppPermaRoute
   '/_app/philosophy': typeof AppPhilosophyRoute
@@ -179,6 +188,7 @@ export interface FileRouteTypes {
     | '/diary'
     | '/ecosystem'
     | '/knowledge'
+    | '/manifesto'
     | '/map'
     | '/perma'
     | '/philosophy'
@@ -196,6 +206,7 @@ export interface FileRouteTypes {
     | '/diary'
     | '/ecosystem'
     | '/knowledge'
+    | '/manifesto'
     | '/map'
     | '/perma'
     | '/philosophy'
@@ -215,6 +226,7 @@ export interface FileRouteTypes {
     | '/_app/diary'
     | '/_app/ecosystem'
     | '/_app/knowledge'
+    | '/_app/manifesto'
     | '/_app/map'
     | '/_app/perma'
     | '/_app/philosophy'
@@ -318,6 +330,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMapRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/manifesto': {
+      id: '/_app/manifesto'
+      path: '/manifesto'
+      fullPath: '/manifesto'
+      preLoaderRoute: typeof AppManifestoRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/knowledge': {
       id: '/_app/knowledge'
       path: '/knowledge'
@@ -362,6 +381,7 @@ interface AppRouteChildren {
   AppDiaryRoute: typeof AppDiaryRoute
   AppEcosystemRoute: typeof AppEcosystemRoute
   AppKnowledgeRoute: typeof AppKnowledgeRoute
+  AppManifestoRoute: typeof AppManifestoRoute
   AppMapRoute: typeof AppMapRoute
   AppPermaRoute: typeof AppPermaRoute
   AppPhilosophyRoute: typeof AppPhilosophyRoute
@@ -379,6 +399,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppDiaryRoute: AppDiaryRoute,
   AppEcosystemRoute: AppEcosystemRoute,
   AppKnowledgeRoute: AppKnowledgeRoute,
+  AppManifestoRoute: AppManifestoRoute,
   AppMapRoute: AppMapRoute,
   AppPermaRoute: AppPermaRoute,
   AppPhilosophyRoute: AppPhilosophyRoute,
