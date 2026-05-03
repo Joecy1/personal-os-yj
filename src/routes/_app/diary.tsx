@@ -1,33 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { Module, PageHeader, SectionHeader, EmptyState } from "@/components/Module";
-import { toast } from "sonner";
+import { CaptureCard, EMOTION_COLOR, type Emotion } from "@/components/EsmCapture";
 
 export const Route = createFileRoute("/_app/diary")({ component: DiaryPage });
 
-const EMOTIONS = ["joy", "calm", "curiosity", "surprise", "sadness", "fear", "anger", "disgust"] as const;
-type Emotion = (typeof EMOTIONS)[number];
-
-const EMOTION_COLOR: Record<Emotion, string> = {
-  joy: "var(--amber)",
-  calm: "var(--teal)",
-  curiosity: "var(--purple)",
-  surprise: "var(--coral)",
-  sadness: "var(--ink-3)",
-  fear: "var(--ink-3)",
-  anger: "var(--coral)",
-  disgust: "var(--ink-3)",
-};
-
-function todayStr() {
-  return new Date().toISOString().slice(0, 10);
-}
-function dayKey(iso: string) {
-  return iso.slice(0, 10);
-}
+function todayStr() { return new Date().toISOString().slice(0, 10); }
+function dayKey(iso: string) { return iso.slice(0, 10); }
 
 function DiaryPage() {
   const { user } = useAuth();
@@ -37,13 +18,7 @@ function DiaryPage() {
     queryKey: ["esm-entries", user?.id],
     enabled: !!user,
     queryFn: async () =>
-      (
-        await supabase
-          .from("esm_entries")
-          .select("*")
-          .order("captured_at", { ascending: false })
-          .limit(200)
-      ).data ?? [],
+      (await supabase.from("esm_entries").select("*").order("captured_at", { ascending: false }).limit(200)).data ?? [],
   });
 
   const onLogged = () => {
@@ -53,17 +28,14 @@ function DiaryPage() {
 
   const today = (entries ?? []).filter((e) => dayKey(e.captured_at) === todayStr());
 
-  // 7-day strip
   const days: { date: string; avgV: number | null; avgA: number | null; n: number }[] = [];
   for (let i = 6; i >= 0; i--) {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
+    const d = new Date(); d.setDate(d.getDate() - i);
     const k = d.toISOString().slice(0, 10);
     const day = (entries ?? []).filter((e) => dayKey(e.captured_at) === k);
     const n = day.length;
     days.push({
-      date: k,
-      n,
+      date: k, n,
       avgV: n ? day.reduce((s, e) => s + (e.valence ?? 0), 0) / n : null,
       avgA: n ? day.reduce((s, e) => s + (e.arousal ?? 0), 0) / n : null,
     });
@@ -79,8 +51,7 @@ function DiaryPage() {
         <SectionHeader title="Last 7 days" />
         <div className="pos-card" style={{ display: "flex", gap: 12, alignItems: "flex-end" }}>
           {days.map((d) => {
-            const v = d.avgV ?? 0;
-            const a = d.avgA ?? 0;
+            const v = d.avgV ?? 0; const a = d.avgA ?? 0;
             const vH = Math.max(2, Math.abs(v) * 14);
             const aH = Math.max(2, Math.abs(a) * 14);
             return (
@@ -106,11 +77,7 @@ function DiaryPage() {
       <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         <div>
           <SectionHeader title={`Today · ${today.length}`} />
-          {today.length === 0 ? (
-            <EmptyState>No check-ins yet today.</EmptyState>
-          ) : (
-            today.map((e) => <EntryRow key={e.id} entry={e} />)
-          )}
+          {today.length === 0 ? <EmptyState>No check-ins yet today.</EmptyState> : today.map((e) => <EntryRow key={e.id} entry={e} />)}
         </div>
         <div>
           <SectionHeader title="History" />
@@ -121,89 +88,6 @@ function DiaryPage() {
         </div>
       </div>
     </Module>
-  );
-}
-
-export function CaptureCard({ onSaved, compact }: { onSaved?: () => void; compact?: boolean }) {
-  const { user } = useAuth();
-  const [valence, setValence] = useState(0);
-  const [arousal, setArousal] = useState(0);
-  const [emotion, setEmotion] = useState<Emotion>("calm");
-  const [context, setContext] = useState("");
-  const [note, setNote] = useState("");
-
-  const save = useMutation({
-    mutationFn: async () => {
-      if (!user) return;
-      await supabase.from("esm_entries").insert({
-        user_id: user.id,
-        valence,
-        arousal,
-        primary_emotion: emotion,
-        context,
-        note,
-      });
-    },
-    onSuccess: () => {
-      toast.success("Logged");
-      setContext("");
-      setNote("");
-      setValence(0);
-      setArousal(0);
-      onSaved?.();
-    },
-  });
-
-  return (
-    <div className="pos-card" style={{ background: compact ? "#fff" : "var(--cream-2)" }}>
-      {!compact && <div className="card-label">Quick check-in</div>}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 12 }}>
-        <div>
-          <label className="pos-label">Valence ({valence > 0 ? "+" : ""}{valence})</label>
-          <input type="range" min={-3} max={3} step={1} value={valence} onChange={(e) => setValence(Number(e.target.value))} style={{ width: "100%" }} />
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: "var(--ink-4)", fontFamily: "var(--font-mono)" }}>
-            <span>negative</span><span>positive</span>
-          </div>
-        </div>
-        <div>
-          <label className="pos-label">Arousal ({arousal > 0 ? "+" : ""}{arousal})</label>
-          <input type="range" min={-3} max={3} step={1} value={arousal} onChange={(e) => setArousal(Number(e.target.value))} style={{ width: "100%" }} />
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: "var(--ink-4)", fontFamily: "var(--font-mono)" }}>
-            <span>calm</span><span>activated</span>
-          </div>
-        </div>
-      </div>
-      <label className="pos-label">Primary emotion</label>
-      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 12 }}>
-        {EMOTIONS.map((em) => (
-          <button
-            key={em}
-            className="opt-pill"
-            onClick={() => setEmotion(em)}
-            style={emotion === em ? { background: EMOTION_COLOR[em], color: "#fff", borderColor: EMOTION_COLOR[em] } : {}}
-          >
-            {em}
-          </button>
-        ))}
-      </div>
-      <div style={{ display: "grid", gridTemplateColumns: compact ? "1fr" : "1fr 2fr", gap: 12 }}>
-        <div>
-          <label className="pos-label">Context</label>
-          <input className="pos-input" value={context} onChange={(e) => setContext(e.target.value)} placeholder="What were you doing?" />
-        </div>
-        {!compact && (
-          <div>
-            <label className="pos-label">Note (optional)</label>
-            <input className="pos-input" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Trigger, thought, etc." />
-          </div>
-        )}
-      </div>
-      <div style={{ marginTop: 14, display: "flex", justifyContent: "flex-end" }}>
-        <button className="pos-btn primary" onClick={() => save.mutate()} disabled={save.isPending}>
-          {save.isPending ? "Logging…" : "Log check-in"}
-        </button>
-      </div>
-    </div>
   );
 }
 
