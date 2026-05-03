@@ -278,6 +278,48 @@ export type Database = {
         }
         Relationships: []
       }
+      esm_entries: {
+        Row: {
+          arousal: number
+          captured_at: string
+          context: string
+          created_at: string
+          id: string
+          note: string
+          primary_emotion: string
+          tags: string[]
+          trigger: string
+          user_id: string
+          valence: number
+        }
+        Insert: {
+          arousal?: number
+          captured_at?: string
+          context?: string
+          created_at?: string
+          id?: string
+          note?: string
+          primary_emotion?: string
+          tags?: string[]
+          trigger?: string
+          user_id: string
+          valence?: number
+        }
+        Update: {
+          arousal?: number
+          captured_at?: string
+          context?: string
+          created_at?: string
+          id?: string
+          note?: string
+          primary_emotion?: string
+          tags?: string[]
+          trigger?: string
+          user_id?: string
+          valence?: number
+        }
+        Relationships: []
+      }
       knowledge_frameworks: {
         Row: {
           author: string
