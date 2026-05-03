@@ -165,7 +165,7 @@ function Daily() {
         </div>
       )}
 
-      <div style={{ background: "#fff1ed", border: "1px solid rgba(220,90,60,0.2)", borderRadius: 10, padding: "14px 18px", marginBottom: 16 }}>
+      <div style={{ background: "var(--coral-bg)", border: "1px solid rgba(184,74,46,0.2)", borderRadius: 10, padding: "14px 18px", marginBottom: 16 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
             <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--coral)" }}>Emotion pulse</div>
