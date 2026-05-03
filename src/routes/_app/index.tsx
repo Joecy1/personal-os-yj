@@ -89,6 +89,21 @@ function Daily() {
     },
   });
 
+  const { data: esmToday } = useQuery({
+    queryKey: ["esm-today", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const start = new Date(); start.setHours(0, 0, 0, 0);
+      const { data } = await supabase
+        .from("esm_entries")
+        .select("*")
+        .gte("captured_at", start.toISOString())
+        .order("captured_at", { ascending: false });
+      return data ?? [];
+    },
+  });
+  const [showCapture, setShowCapture] = useState(false);
+
   const [focus, setFocus] = useState("");
   const [wentWell, setWentWell] = useState("");
   const [carry, setCarry] = useState("");
