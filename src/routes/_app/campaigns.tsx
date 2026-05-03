@@ -25,11 +25,21 @@ function CampaignsPage() {
   });
 
   const create = useMutation({
-    mutationFn: async (payload: { title: string; win_condition: string; milestones: Milestone[]; tags: string[] }) => {
+    mutationFn: async (payload: { title: string; win_condition: string; milestones: Milestone[]; tags: string[]; frameworks_used?: string[] }) => {
       await supabase.from("campaigns").insert({ user_id: user!.id, ...payload, status: "active" });
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["campaigns-all"] }); qc.invalidateQueries({ queryKey: ["campaigns"] }); qc.invalidateQueries({ queryKey: ["sidebar-badges"] }); toast.success("Campaign created"); setShowNew(false); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["campaigns-all"] }); qc.invalidateQueries({ queryKey: ["campaigns"] }); qc.invalidateQueries({ queryKey: ["sidebar-badges"] }); toast.success("Campaign created"); setShowNew(false); setShowTemplates(false); },
   });
+
+  const createFromTemplate = (t: CampaignTemplate) => {
+    create.mutate({
+      title: t.title,
+      win_condition: t.win_condition,
+      milestones: t.milestones.map((m) => ({ ...m, id: crypto.randomUUID() })),
+      tags: t.tags,
+      frameworks_used: t.framework_slugs,
+    });
+  };
 
   const toggleMilestone = useMutation({
     mutationFn: async ({ campaign, idx }: { campaign: any; idx: number }) => {
