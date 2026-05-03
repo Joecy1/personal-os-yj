@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { Module, PageHeader, EmptyState } from "@/components/Module";
 import { FrameworkChips } from "@/components/FrameworkPicker";
+import { CAMPAIGN_TEMPLATES, type CampaignTemplate } from "@/lib/campaign-templates";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/campaigns")({ component: CampaignsPage });
@@ -15,6 +16,7 @@ function CampaignsPage() {
   const { user } = useAuth();
   const qc = useQueryClient();
   const [showNew, setShowNew] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
 
   const { data: campaigns } = useQuery({
     queryKey: ["campaigns-all", user?.id],
