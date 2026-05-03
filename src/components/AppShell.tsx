@@ -6,7 +6,10 @@ import { longDate } from "@/lib/date";
 
 type BadgeKey = "campaigns" | "quests" | "ecosystem" | "relations" | "worldmaps" | "frameworks";
 const sections: Array<{ label: string; items: Array<{ to: string; label: string; dot: string; badgeKey?: BadgeKey }> }> = [
-  { label: "Today", items: [{ to: "/", label: "Daily session", dot: "var(--amber)" }] },
+  { label: "Today", items: [
+    { to: "/", label: "Daily session", dot: "var(--amber)" },
+    { to: "/diary", label: "Emotion diary", dot: "var(--coral)" },
+  ] },
   {
     label: "Execution",
     items: [
@@ -14,6 +17,7 @@ const sections: Array<{ label: string; items: Array<{ to: string; label: string;
       { to: "/quests", label: "Daily quests", dot: "var(--teal)", badgeKey: "quests" },
       { to: "/desire", label: "Desire engine", dot: "var(--amber)" },
       { to: "/stats", label: "Stats", dot: "var(--teal)" },
+      { to: "/progress", label: "Progress", dot: "var(--purple)" },
     ],
   },
   {
