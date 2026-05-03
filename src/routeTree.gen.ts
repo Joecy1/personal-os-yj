@@ -17,11 +17,13 @@ import { Route as AppWorldmapRouteImport } from './routes/_app/worldmap'
 import { Route as AppStatsRouteImport } from './routes/_app/stats'
 import { Route as AppRelationsRouteImport } from './routes/_app/relations'
 import { Route as AppQuestsRouteImport } from './routes/_app/quests'
+import { Route as AppProgressRouteImport } from './routes/_app/progress'
 import { Route as AppPhilosophyRouteImport } from './routes/_app/philosophy'
 import { Route as AppPermaRouteImport } from './routes/_app/perma'
 import { Route as AppMapRouteImport } from './routes/_app/map'
 import { Route as AppKnowledgeRouteImport } from './routes/_app/knowledge'
 import { Route as AppEcosystemRouteImport } from './routes/_app/ecosystem'
+import { Route as AppDiaryRouteImport } from './routes/_app/diary'
 import { Route as AppDesireRouteImport } from './routes/_app/desire'
 import { Route as AppCampaignsRouteImport } from './routes/_app/campaigns'
 
@@ -64,6 +66,11 @@ const AppQuestsRoute = AppQuestsRouteImport.update({
   path: '/quests',
   getParentRoute: () => AppRoute,
 } as any)
+const AppProgressRoute = AppProgressRouteImport.update({
+  id: '/progress',
+  path: '/progress',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppPhilosophyRoute = AppPhilosophyRouteImport.update({
   id: '/philosophy',
   path: '/philosophy',
@@ -89,6 +96,11 @@ const AppEcosystemRoute = AppEcosystemRouteImport.update({
   path: '/ecosystem',
   getParentRoute: () => AppRoute,
 } as any)
+const AppDiaryRoute = AppDiaryRouteImport.update({
+  id: '/diary',
+  path: '/diary',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDesireRoute = AppDesireRouteImport.update({
   id: '/desire',
   path: '/desire',
@@ -106,11 +118,13 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/campaigns': typeof AppCampaignsRoute
   '/desire': typeof AppDesireRoute
+  '/diary': typeof AppDiaryRoute
   '/ecosystem': typeof AppEcosystemRoute
   '/knowledge': typeof AppKnowledgeRoute
   '/map': typeof AppMapRoute
   '/perma': typeof AppPermaRoute
   '/philosophy': typeof AppPhilosophyRoute
+  '/progress': typeof AppProgressRoute
   '/quests': typeof AppQuestsRoute
   '/relations': typeof AppRelationsRoute
   '/stats': typeof AppStatsRoute
@@ -121,11 +135,13 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/campaigns': typeof AppCampaignsRoute
   '/desire': typeof AppDesireRoute
+  '/diary': typeof AppDiaryRoute
   '/ecosystem': typeof AppEcosystemRoute
   '/knowledge': typeof AppKnowledgeRoute
   '/map': typeof AppMapRoute
   '/perma': typeof AppPermaRoute
   '/philosophy': typeof AppPhilosophyRoute
+  '/progress': typeof AppProgressRoute
   '/quests': typeof AppQuestsRoute
   '/relations': typeof AppRelationsRoute
   '/stats': typeof AppStatsRoute
@@ -139,11 +155,13 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/_app/campaigns': typeof AppCampaignsRoute
   '/_app/desire': typeof AppDesireRoute
+  '/_app/diary': typeof AppDiaryRoute
   '/_app/ecosystem': typeof AppEcosystemRoute
   '/_app/knowledge': typeof AppKnowledgeRoute
   '/_app/map': typeof AppMapRoute
   '/_app/perma': typeof AppPermaRoute
   '/_app/philosophy': typeof AppPhilosophyRoute
+  '/_app/progress': typeof AppProgressRoute
   '/_app/quests': typeof AppQuestsRoute
   '/_app/relations': typeof AppRelationsRoute
   '/_app/stats': typeof AppStatsRoute
@@ -158,11 +176,13 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/campaigns'
     | '/desire'
+    | '/diary'
     | '/ecosystem'
     | '/knowledge'
     | '/map'
     | '/perma'
     | '/philosophy'
+    | '/progress'
     | '/quests'
     | '/relations'
     | '/stats'
@@ -173,11 +193,13 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/campaigns'
     | '/desire'
+    | '/diary'
     | '/ecosystem'
     | '/knowledge'
     | '/map'
     | '/perma'
     | '/philosophy'
+    | '/progress'
     | '/quests'
     | '/relations'
     | '/stats'
@@ -190,11 +212,13 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/_app/campaigns'
     | '/_app/desire'
+    | '/_app/diary'
     | '/_app/ecosystem'
     | '/_app/knowledge'
     | '/_app/map'
     | '/_app/perma'
     | '/_app/philosophy'
+    | '/_app/progress'
     | '/_app/quests'
     | '/_app/relations'
     | '/_app/stats'
@@ -266,6 +290,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppQuestsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/progress': {
+      id: '/_app/progress'
+      path: '/progress'
+      fullPath: '/progress'
+      preLoaderRoute: typeof AppProgressRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/philosophy': {
       id: '/_app/philosophy'
       path: '/philosophy'
@@ -301,6 +332,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEcosystemRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/diary': {
+      id: '/_app/diary'
+      path: '/diary'
+      fullPath: '/diary'
+      preLoaderRoute: typeof AppDiaryRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/desire': {
       id: '/_app/desire'
       path: '/desire'
@@ -321,11 +359,13 @@ declare module '@tanstack/react-router' {
 interface AppRouteChildren {
   AppCampaignsRoute: typeof AppCampaignsRoute
   AppDesireRoute: typeof AppDesireRoute
+  AppDiaryRoute: typeof AppDiaryRoute
   AppEcosystemRoute: typeof AppEcosystemRoute
   AppKnowledgeRoute: typeof AppKnowledgeRoute
   AppMapRoute: typeof AppMapRoute
   AppPermaRoute: typeof AppPermaRoute
   AppPhilosophyRoute: typeof AppPhilosophyRoute
+  AppProgressRoute: typeof AppProgressRoute
   AppQuestsRoute: typeof AppQuestsRoute
   AppRelationsRoute: typeof AppRelationsRoute
   AppStatsRoute: typeof AppStatsRoute
@@ -336,11 +376,13 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppCampaignsRoute: AppCampaignsRoute,
   AppDesireRoute: AppDesireRoute,
+  AppDiaryRoute: AppDiaryRoute,
   AppEcosystemRoute: AppEcosystemRoute,
   AppKnowledgeRoute: AppKnowledgeRoute,
   AppMapRoute: AppMapRoute,
   AppPermaRoute: AppPermaRoute,
   AppPhilosophyRoute: AppPhilosophyRoute,
+  AppProgressRoute: AppProgressRoute,
   AppQuestsRoute: AppQuestsRoute,
   AppRelationsRoute: AppRelationsRoute,
   AppStatsRoute: AppStatsRoute,
