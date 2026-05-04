@@ -238,7 +238,7 @@ function CampaignForm({ onSave, onCancel, initial }: { onSave: (p: any) => void;
       title,
       win_condition: winCondition,
       milestones: milestones.filter((m) => m.title.trim()).map((m) => ({ ...m, xp: Number(m.xp ?? 25), capital_amount: Number(m.capital_amount ?? 0) })),
-      tags: tags.split(",").map((t) => t.trim()).filter(Boolean),
+      tags: tags.split(",").map((t: string) => t.trim()).filter(Boolean),
       xp_value: xpValue,
       capital_targets: Object.fromEntries(Object.entries(targets).filter(([, v]) => Number(v))),
     });
