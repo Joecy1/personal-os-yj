@@ -138,7 +138,7 @@ function HandDrawnMap({ state }: { state: MapState }) {
         const x = 60 + i * 130, y = 120;
         return (
           <g key={e.id}>
-            <text x={x} y={y - 8} fontSize={10} fill="var(--teal)" fontFamily="var(--font-mono)" textTransform="uppercase">DEFEND</text>
+            <text x={x} y={y - 8} fontSize={10} fill="var(--teal)" fontFamily="var(--font-mono)">DEFEND</text>
             <text x={x} y={y + 8} fontSize={12} fill="var(--ink)" fontFamily="var(--font-sans)" fontWeight={500}>{e.label}</text>
             <line x1={x + 30} y1={y + 18} x2={cx - 50} y2={cy - 90} stroke="var(--teal)" strokeWidth={1} markerEnd="url(#arrInk)" />
           </g>

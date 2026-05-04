@@ -20,6 +20,7 @@ import { Route as AppQuestsRouteImport } from './routes/_app/quests'
 import { Route as AppProgressRouteImport } from './routes/_app/progress'
 import { Route as AppPhilosophyRouteImport } from './routes/_app/philosophy'
 import { Route as AppPermaRouteImport } from './routes/_app/perma'
+import { Route as AppMotivationRouteImport } from './routes/_app/motivation'
 import { Route as AppMapRouteImport } from './routes/_app/map'
 import { Route as AppManifestoRouteImport } from './routes/_app/manifesto'
 import { Route as AppKnowledgeRouteImport } from './routes/_app/knowledge'
@@ -82,6 +83,11 @@ const AppPermaRoute = AppPermaRouteImport.update({
   path: '/perma',
   getParentRoute: () => AppRoute,
 } as any)
+const AppMotivationRoute = AppMotivationRouteImport.update({
+  id: '/motivation',
+  path: '/motivation',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppMapRoute = AppMapRouteImport.update({
   id: '/map',
   path: '/map',
@@ -129,6 +135,7 @@ export interface FileRoutesByFullPath {
   '/knowledge': typeof AppKnowledgeRoute
   '/manifesto': typeof AppManifestoRoute
   '/map': typeof AppMapRoute
+  '/motivation': typeof AppMotivationRoute
   '/perma': typeof AppPermaRoute
   '/philosophy': typeof AppPhilosophyRoute
   '/progress': typeof AppProgressRoute
@@ -147,6 +154,7 @@ export interface FileRoutesByTo {
   '/knowledge': typeof AppKnowledgeRoute
   '/manifesto': typeof AppManifestoRoute
   '/map': typeof AppMapRoute
+  '/motivation': typeof AppMotivationRoute
   '/perma': typeof AppPermaRoute
   '/philosophy': typeof AppPhilosophyRoute
   '/progress': typeof AppProgressRoute
@@ -168,6 +176,7 @@ export interface FileRoutesById {
   '/_app/knowledge': typeof AppKnowledgeRoute
   '/_app/manifesto': typeof AppManifestoRoute
   '/_app/map': typeof AppMapRoute
+  '/_app/motivation': typeof AppMotivationRoute
   '/_app/perma': typeof AppPermaRoute
   '/_app/philosophy': typeof AppPhilosophyRoute
   '/_app/progress': typeof AppProgressRoute
@@ -190,6 +199,7 @@ export interface FileRouteTypes {
     | '/knowledge'
     | '/manifesto'
     | '/map'
+    | '/motivation'
     | '/perma'
     | '/philosophy'
     | '/progress'
@@ -208,6 +218,7 @@ export interface FileRouteTypes {
     | '/knowledge'
     | '/manifesto'
     | '/map'
+    | '/motivation'
     | '/perma'
     | '/philosophy'
     | '/progress'
@@ -228,6 +239,7 @@ export interface FileRouteTypes {
     | '/_app/knowledge'
     | '/_app/manifesto'
     | '/_app/map'
+    | '/_app/motivation'
     | '/_app/perma'
     | '/_app/philosophy'
     | '/_app/progress'
@@ -323,6 +335,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPermaRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/motivation': {
+      id: '/_app/motivation'
+      path: '/motivation'
+      fullPath: '/motivation'
+      preLoaderRoute: typeof AppMotivationRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/map': {
       id: '/_app/map'
       path: '/map'
@@ -383,6 +402,7 @@ interface AppRouteChildren {
   AppKnowledgeRoute: typeof AppKnowledgeRoute
   AppManifestoRoute: typeof AppManifestoRoute
   AppMapRoute: typeof AppMapRoute
+  AppMotivationRoute: typeof AppMotivationRoute
   AppPermaRoute: typeof AppPermaRoute
   AppPhilosophyRoute: typeof AppPhilosophyRoute
   AppProgressRoute: typeof AppProgressRoute
@@ -401,6 +421,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppKnowledgeRoute: AppKnowledgeRoute,
   AppManifestoRoute: AppManifestoRoute,
   AppMapRoute: AppMapRoute,
+  AppMotivationRoute: AppMotivationRoute,
   AppPermaRoute: AppPermaRoute,
   AppPhilosophyRoute: AppPhilosophyRoute,
   AppProgressRoute: AppProgressRoute,
