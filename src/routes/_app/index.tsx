@@ -3,20 +3,32 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { greeting, longDate, today, shortDate } from "@/lib/date";
-import { useQuests, useToggleQuest } from "@/lib/queries";
+import { greeting, longDate, today } from "@/lib/date";
+import { useQuests, useToggleQuest, usePlayerStats } from "@/lib/queries";
 import { Module, SectionHeader } from "@/components/Module";
 import { FrameworkSelect } from "@/components/FrameworkPicker";
 import { CaptureCard } from "@/components/EsmCapture";
+import { Pomodoro } from "@/components/Pomodoro";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/")({ component: Daily });
+
+const CAPITALS: { key: "human" | "social" | "financial" | "health" | "symbolic" | "psychological" | "time_autonomy"; label: string }[] = [
+  { key: "human", label: "Human" },
+  { key: "health", label: "Health" },
+  { key: "financial", label: "Financial" },
+  { key: "social", label: "Social" },
+  { key: "symbolic", label: "Symbolic" },
+  { key: "psychological", label: "Psych" },
+  { key: "time_autonomy", label: "Time" },
+];
 
 function Daily() {
   const { user } = useAuth();
   const { data: questData } = useQuests();
   const toggle = useToggleQuest();
   const qc = useQueryClient();
+  const { data: stats } = usePlayerStats();
 
   const { data: campaigns } = useQuery({
     queryKey: ["campaigns", user?.id],
@@ -28,29 +40,6 @@ function Daily() {
     queryKey: ["review", user?.id, today()],
     enabled: !!user,
     queryFn: async () => (await supabase.from("daily_reviews").select("*").eq("date", today()).maybeSingle()).data,
-  });
-
-  const { data: perma } = useQuery({
-    queryKey: ["perma-today", user?.id],
-    enabled: !!user,
-    queryFn: async () => (await supabase.from("perma_entries").select("*").eq("date", today()).maybeSingle()).data,
-  });
-
-  const { data: anchor } = useQuery({
-    queryKey: ["desire-anchor", user?.id],
-    enabled: !!user,
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("desire_cycles")
-        .select("id,desire,idol_name,idol_why,idol_traits,is_self_idol,ambition_size")
-        .eq("status", "active")
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (!data) return null;
-      const hasAnchor = data.is_self_idol || (data.idol_name && data.idol_name.trim()) || (data.idol_why && data.idol_why.trim());
-      return hasAnchor ? data : null;
-    },
   });
 
   const { data: ecoSurfaced } = useQuery({
@@ -77,7 +66,6 @@ function Daily() {
       const peopleById = new Map((people.data ?? []).map((p) => [p.id, p]));
       const interactions = (ints.data ?? []) as Array<{ id: string; person_id: string; what_happened: string; want_to_say: string | null; interaction_date: string }>;
       const withUnsaid = interactions.filter((i) => i.want_to_say && i.want_to_say.trim());
-      // overdue: latest interaction per person > 7 days ago
       const latestByPerson = new Map<string, typeof interactions[number]>();
       interactions.forEach((i) => { if (!latestByPerson.has(i.person_id)) latestByPerson.set(i.person_id, i); });
       const sevenAgo = new Date(); sevenAgo.setDate(sevenAgo.getDate() - 7);
@@ -102,8 +90,18 @@ function Daily() {
       return data ?? [];
     },
   });
-  const [showCapture, setShowCapture] = useState(false);
 
+  const { data: pomToday } = useQuery({
+    queryKey: ["pomodoro-today", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const start = new Date(); start.setHours(0, 0, 0, 0);
+      const { data } = await supabase.from("pomodoro_sessions").select("*").gte("started_at", start.toISOString()).order("started_at", { ascending: false });
+      return data ?? [];
+    },
+  });
+
+  const [showCapture, setShowCapture] = useState(false);
   const [focus, setFocus] = useState("");
   const [wentWell, setWentWell] = useState("");
   const [carry, setCarry] = useState("");
@@ -128,12 +126,14 @@ function Daily() {
     return Math.round((arr.filter((x: any) => x.complete).length / arr.length) * 100);
   };
 
+  const focusMins = (pomToday ?? []).filter((p) => p.completed).reduce((s, p) => s + (p.duration_min ?? 0), 0);
+
   return (
     <Module>
       <div className="font-serif" style={{ fontSize: 28, fontStyle: "italic", letterSpacing: "-0.02em", marginBottom: 6 }}>{greeting()}</div>
       <div className="font-mono" style={{ fontSize: 12, color: "var(--ink-3)", letterSpacing: "0.08em", marginBottom: 32 }}>{longDate()}</div>
 
-      <div style={{ background: "var(--amber-bg)", border: "1px solid rgba(200,130,10,0.2)", borderRadius: 10, padding: "18px 22px", marginBottom: 24 }}>
+      <div style={{ background: "var(--amber-bg)", border: "1px solid rgba(200,130,10,0.2)", borderRadius: 10, padding: "18px 22px", marginBottom: 16 }}>
         <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--amber)", marginBottom: 6 }}>Today's focus</div>
         <input
           value={focus}
@@ -144,27 +144,37 @@ function Daily() {
         />
       </div>
 
-      {anchor && (
-        <div style={{ background: "var(--purple-bg)", border: "1px solid rgba(90,68,168,0.2)", borderRadius: 10, padding: "16px 20px", marginBottom: 16 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--purple)" }}>Anchor — who you're becoming</div>
-            {anchor.ambition_size && <span className="tag tag-purple">{anchor.ambition_size}</span>}
-          </div>
-          <Link to="/desire" style={{ display: "block", textDecoration: "none", color: "inherit" }}>
-            <div style={{ fontSize: 14, color: "var(--ink)", lineHeight: 1.5, fontStyle: "italic" }} className="font-serif">
-              {anchor.is_self_idol ? "My future self" : (anchor.idol_name || "—")}
-              {anchor.idol_why ? <span style={{ fontStyle: "normal", fontFamily: "var(--font-sans)", color: "var(--ink-2)" }}> — {anchor.idol_why}</span> : null}
-            </div>
-            {anchor.idol_traits && (
-              <div style={{ fontSize: 11, color: "var(--ink-3)", marginTop: 6, fontFamily: "var(--font-mono)", letterSpacing: "0.04em" }}>traits to absorb · {anchor.idol_traits}</div>
-            )}
-            {anchor.desire && (
-              <div style={{ fontSize: 11, color: "var(--ink-4)", marginTop: 4 }}>serving: {anchor.desire.slice(0, 100)}{anchor.desire.length > 100 ? "…" : ""}</div>
-            )}
-          </Link>
+      {/* Stats snapshot */}
+      <div className="pos-card" style={{ marginBottom: 16 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+          <div className="card-label">Progress snapshot</div>
+          <Link to="/stats" style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--ink-4)", textTransform: "uppercase", letterSpacing: "0.06em", textDecoration: "none" }}>All →</Link>
         </div>
-      )}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 14 }}>
+          <Kpi label="Level" value={stats?.level ?? 1} />
+          <Kpi label="XP" value={stats?.xp_total ?? 0} />
+          <Kpi label="Streak" value={`${stats?.streak_current ?? 0}d`} />
+          <Kpi label="Focus today" value={`${focusMins}m`} />
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 8 }}>
+          {CAPITALS.map((c) => {
+            const v = (stats as any)?.[`capital_${c.key}`] ?? 0;
+            return (
+              <div key={c.key}>
+                <div style={{ height: 4, background: "var(--cream-3)", borderRadius: 2, overflow: "hidden", marginBottom: 4 }}>
+                  <div style={{ height: "100%", width: `${v}%`, background: "var(--teal)" }} />
+                </div>
+                <div className="font-mono" style={{ fontSize: 9, color: "var(--ink-3)", textAlign: "center", letterSpacing: "0.04em" }}>{c.label}</div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
 
+      {/* Pomodoro */}
+      <Pomodoro />
+
+      {/* Emotion pulse */}
       <div style={{ background: "var(--coral-bg)", border: "1px solid rgba(184,74,46,0.2)", borderRadius: 10, padding: "14px 18px", marginBottom: 16 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
@@ -191,7 +201,7 @@ function Daily() {
         )}
       </div>
 
-
+      {/* Ecosystem */}
       <div style={{ background: "var(--green-bg)", border: "1px solid rgba(58,125,68,0.2)", borderRadius: 10, padding: "16px 20px", marginBottom: 16 }}>
         <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--green)", marginBottom: 8 }}>From your ecosystem — resonant today</div>
         {(ecoSurfaced?.length ?? 0) === 0 ? (
@@ -209,6 +219,7 @@ function Daily() {
         )}
       </div>
 
+      {/* Relations */}
       <div style={{ background: "var(--teal-bg)", border: "1px solid rgba(10,122,106,0.2)", borderRadius: 10, padding: "16px 20px", marginBottom: 32 }}>
         <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--teal)", marginBottom: 8 }}>From your relations — worth revisiting</div>
         {(relSurfaced?.length ?? 0) === 0 ? (
@@ -272,46 +283,30 @@ function Daily() {
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-        <div>
-          <SectionHeader title="Wellbeing today" link={<Link to="/perma" style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--ink-4)", textTransform: "uppercase", letterSpacing: "0.06em", textDecoration: "none" }}>{perma ? "Edit →" : "Log entry →"}</Link>} />
-          <div className="pos-card">
-            {perma ? (
-              [
-                ["Positive emotion", perma.positive_emotion, "amber"],
-                ["Engagement", perma.engagement, "amber"],
-                ["Relationships", perma.relationships, "teal"],
-                ["Physical health", perma.physical_health, "teal"],
-              ].map(([k, v, c]: any) => (
-                <div key={k} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
-                  <span className="font-mono" style={{ fontSize: 11, color: "var(--ink-2)", width: 130 }}>{k}</span>
-                  <div style={{ flex: 1, height: 6, background: "var(--cream-3)", borderRadius: 3, overflow: "hidden" }}>
-                    <div style={{ height: "100%", width: `${(v / 10) * 100}%`, background: `var(--${c})` }} />
-                  </div>
-                  <span className="font-mono" style={{ fontSize: 11, color: "var(--ink-3)", width: 22, textAlign: "right" }}>{v}</span>
-                </div>
-              ))
-            ) : (
-              <div style={{ textAlign: "center", padding: 20, color: "var(--ink-3)", fontSize: 13 }}>No entry today.</div>
-            )}
-          </div>
-        </div>
-        <div>
-          <SectionHeader title="End-of-day review" />
-          <div className="pos-card">
-            <label className="pos-label">What went well?</label>
-            <textarea className="pos-input" rows={2} value={wentWell} onChange={(e) => setWentWell(e.target.value)} onBlur={() => { saveReview.mutate({}); toast.success("Saved"); }} placeholder="Three things…" />
-            <label className="pos-label" style={{ marginTop: 12 }}>What to carry forward?</label>
-            <textarea className="pos-input" rows={2} value={carry} onChange={(e) => setCarry(e.target.value)} onBlur={() => { saveReview.mutate({}); toast.success("Saved"); }} placeholder="One intention…" />
-            <label className="pos-label" style={{ marginTop: 12 }}>Which framework did you use today?</label>
-            <FrameworkSelect
-              value={review?.framework_used_today ?? null}
-              onChange={(slug) => { saveReview.mutate({ framework_used_today: slug ?? "" }); }}
-              placeholder="— none today —"
-            />
-          </div>
+      <div>
+        <SectionHeader title="End-of-day review" />
+        <div className="pos-card">
+          <label className="pos-label">What went well?</label>
+          <textarea className="pos-input" rows={2} value={wentWell} onChange={(e) => setWentWell(e.target.value)} onBlur={() => { saveReview.mutate({}); toast.success("Saved"); }} placeholder="Three things…" />
+          <label className="pos-label" style={{ marginTop: 12 }}>What to carry forward?</label>
+          <textarea className="pos-input" rows={2} value={carry} onChange={(e) => setCarry(e.target.value)} onBlur={() => { saveReview.mutate({}); toast.success("Saved"); }} placeholder="One intention…" />
+          <label className="pos-label" style={{ marginTop: 12 }}>Which framework did you use today?</label>
+          <FrameworkSelect
+            value={review?.framework_used_today ?? null}
+            onChange={(slug) => { saveReview.mutate({ framework_used_today: slug ?? "" }); }}
+            placeholder="— none today —"
+          />
         </div>
       </div>
     </Module>
+  );
+}
+
+function Kpi({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div style={{ borderLeft: "2px solid var(--ink)", paddingLeft: 10 }}>
+      <div className="font-mono" style={{ fontSize: 9, color: "var(--ink-3)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>{label}</div>
+      <div className="font-serif" style={{ fontSize: 20, fontWeight: 500, color: "var(--ink)" }}>{value}</div>
+    </div>
   );
 }
