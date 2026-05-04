@@ -255,6 +255,18 @@ Deno.serve(async (req) => {
 
     if (action === "compare") {
       const { myMap, partnerMap, myLabel, partnerLabel, topic } = body;
+      if (!myMap || typeof myMap !== "object" || !partnerMap || typeof partnerMap !== "object") {
+        return new Response(JSON.stringify({ error: "myMap and partnerMap required" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      if (typeof topic !== "string" || topic.length > MAX_TOPIC) {
+        return new Response(JSON.stringify({ error: "Invalid topic" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      if (typeof myLabel !== "string" || myLabel.length > MAX_LABEL || typeof partnerLabel !== "string" || partnerLabel.length > MAX_LABEL) {
+        return new Response(JSON.stringify({ error: "Invalid labels" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      if (JSON.stringify(myMap).length > MAX_MAP_BYTES || JSON.stringify(partnerMap).length > MAX_MAP_BYTES) {
+        return new Response(JSON.stringify({ error: "Map payload too large" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
       const result = await callGateway(
         [{ role: "user", content: comparisonPrompt(myMap, partnerMap, myLabel, partnerLabel, topic) }],
         comparisonTool,
