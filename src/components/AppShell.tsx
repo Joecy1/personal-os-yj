@@ -9,13 +9,13 @@ const sections: Array<{ label: string; items: Array<{ to: string; label: string;
   { label: "Today", items: [
     { to: "/", label: "Daily session", dot: "var(--amber)" },
     { to: "/diary", label: "Emotion diary", dot: "var(--coral)" },
+    { to: "/motivation", label: "Motivation engine", dot: "var(--purple)" },
   ] },
   {
     label: "Execution",
     items: [
       { to: "/campaigns", label: "Campaigns", dot: "var(--teal)", badgeKey: "campaigns" },
       { to: "/quests", label: "Daily quests", dot: "var(--teal)", badgeKey: "quests" },
-      { to: "/desire", label: "Desire engine", dot: "var(--amber)" },
       { to: "/stats", label: "Stats", dot: "var(--teal)" },
       { to: "/progress", label: "Progress", dot: "var(--purple)" },
     ],
@@ -35,15 +35,12 @@ const sections: Array<{ label: string; items: Array<{ to: string; label: string;
     ],
   },
   {
-    label: "Reflection",
-    items: [{ to: "/perma", label: "PERMA+4", dot: "var(--coral)" }],
-  },
-  {
-    label: "Self-model",
+    label: "Self model",
     items: [
       { to: "/map", label: "Personal map", dot: "var(--purple)" },
       { to: "/philosophy", label: "Philosophy", dot: "var(--purple)" },
       { to: "/manifesto", label: "Manifesto", dot: "var(--ink)" },
+      { to: "/perma", label: "PERMA+4 (empirical)", dot: "var(--coral)" },
     ],
   },
 ];
@@ -89,8 +86,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <span className="font-mono" style={{ fontSize: 11, color: "var(--ink-3)", letterSpacing: "0.06em" }}>{longDate()}</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <Link to="/desire" className="pos-btn">+ New desire</Link>
-          <Link to="/" className="pos-btn primary">Start session</Link>
+          <Link to="/" className="pos-btn primary">Start Pomodoro</Link>
           <button onClick={signOut} title="Sign out" style={{ width: 28, height: 28, borderRadius: "50%", background: "var(--cream-3)", border: "1px solid var(--rule)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 500, color: "var(--ink-2)", cursor: "pointer" }}>
             {initials}
           </button>
