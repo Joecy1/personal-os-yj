@@ -16,6 +16,8 @@ export type Database = {
     Tables: {
       campaigns: {
         Row: {
+          capital_targets: Json
+          completed_at: string | null
           created_at: string
           frameworks_used: string[]
           id: string
@@ -26,8 +28,11 @@ export type Database = {
           updated_at: string
           user_id: string
           win_condition: string | null
+          xp_value: number
         }
         Insert: {
+          capital_targets?: Json
+          completed_at?: string | null
           created_at?: string
           frameworks_used?: string[]
           id?: string
@@ -38,8 +43,11 @@ export type Database = {
           updated_at?: string
           user_id: string
           win_condition?: string | null
+          xp_value?: number
         }
         Update: {
+          capital_targets?: Json
+          completed_at?: string | null
           created_at?: string
           frameworks_used?: string[]
           id?: string
@@ -50,6 +58,7 @@ export type Database = {
           updated_at?: string
           user_id?: string
           win_condition?: string | null
+          xp_value?: number
         }
         Relationships: []
       }
@@ -374,6 +383,45 @@ export type Database = {
         }
         Relationships: []
       }
+      motivation_entries: {
+        Row: {
+          actions: Json
+          catalyst: string
+          created_at: string
+          desire: string
+          emotion: string
+          id: string
+          raw_text: string
+          reality_check: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          actions?: Json
+          catalyst?: string
+          created_at?: string
+          desire?: string
+          emotion?: string
+          id?: string
+          raw_text?: string
+          reality_check?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          actions?: Json
+          catalyst?: string
+          created_at?: string
+          desire?: string
+          emotion?: string
+          id?: string
+          raw_text?: string
+          reality_check?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       perma_entries: {
         Row: {
           achievement: number
@@ -418,6 +466,39 @@ export type Database = {
           positive_emotion?: number
           positive_mindset?: number
           relationships?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      personal_map: {
+        Row: {
+          defend_engines: Json
+          destroy_engines: Json
+          free_nodes: Json
+          inner_citadel: Json
+          motto: string
+          outputs: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          defend_engines?: Json
+          destroy_engines?: Json
+          free_nodes?: Json
+          inner_citadel?: Json
+          motto?: string
+          outputs?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          defend_engines?: Json
+          destroy_engines?: Json
+          free_nodes?: Json
+          inner_citadel?: Json
+          motto?: string
+          outputs?: Json
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
@@ -533,6 +614,48 @@ export type Database = {
           user_id?: string
           xp_to_next?: number
           xp_total?: number
+        }
+        Relationships: []
+      }
+      pomodoro_sessions: {
+        Row: {
+          break_min: number
+          campaign_id: string | null
+          completed: boolean
+          created_at: string
+          duration_min: number
+          ended_at: string | null
+          id: string
+          log: string
+          quest_id: string | null
+          started_at: string
+          user_id: string
+        }
+        Insert: {
+          break_min?: number
+          campaign_id?: string | null
+          completed?: boolean
+          created_at?: string
+          duration_min?: number
+          ended_at?: string | null
+          id?: string
+          log?: string
+          quest_id?: string | null
+          started_at?: string
+          user_id: string
+        }
+        Update: {
+          break_min?: number
+          campaign_id?: string | null
+          completed?: boolean
+          created_at?: string
+          duration_min?: number
+          ended_at?: string | null
+          id?: string
+          log?: string
+          quest_id?: string | null
+          started_at?: string
+          user_id?: string
         }
         Relationships: []
       }
