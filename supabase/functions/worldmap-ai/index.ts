@@ -200,16 +200,47 @@ async function callGateway(messages: any[], tool: any) {
   }
 }
 
+const MAX_RAW_TEXT = 5000;
+const MAX_TOPIC = 200;
+const MAX_LABEL = 100;
+const MAX_MAP_BYTES = 20000;
+
+async function verifyAuth(req: Request): Promise<Response | null> {
+  const authHeader = req.headers.get("Authorization");
+  const token = authHeader?.replace("Bearer ", "");
+  if (!token) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+  }
+  const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const anonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? Deno.env.get("SUPABASE_PUBLISHABLE_KEY");
+  if (!supabaseUrl || !anonKey) {
+    return new Response(JSON.stringify({ error: "Server misconfigured" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+  }
+  const r = await fetch(`${supabaseUrl}/auth/v1/user`, {
+    headers: { Authorization: `Bearer ${token}`, apikey: anonKey },
+  });
+  if (!r.ok) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+  }
+  return null;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {
+    const authError = await verifyAuth(req);
+    if (authError) return authError;
+
     const body = await req.json();
     const action = body.action;
 
     if (action === "extract") {
       const { rawText, topic } = body;
-      if (!rawText || !topic) {
+      if (!rawText || typeof rawText !== "string" || !topic || typeof topic !== "string") {
         return new Response(JSON.stringify({ error: "rawText and topic required" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      if (rawText.length > MAX_RAW_TEXT || topic.length > MAX_TOPIC) {
+        return new Response(JSON.stringify({ error: "Input too long" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
       const result = await callGateway(
         [{ role: "user", content: extractionPrompt(rawText, topic) }],
