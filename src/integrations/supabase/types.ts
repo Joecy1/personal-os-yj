@@ -329,6 +329,48 @@ export type Database = {
         }
         Relationships: []
       }
+      feedback_items: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          kind: string
+          module_key: string
+          route: string
+          severity: string
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          module_key?: string
+          route?: string
+          severity?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          module_key?: string
+          route?: string
+          severity?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       knowledge_frameworks: {
         Row: {
           author: string
@@ -656,6 +698,60 @@ export type Database = {
           quest_id?: string | null
           started_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      prd_documents: {
+        Row: {
+          created_at: string
+          features: Json
+          id: string
+          module_key: string
+          non_goals: string
+          notes: string
+          principles: string
+          problem: string
+          scope: string
+          status: string
+          success_metrics: string
+          title: string
+          updated_at: string
+          user_id: string
+          users: string
+        }
+        Insert: {
+          created_at?: string
+          features?: Json
+          id?: string
+          module_key?: string
+          non_goals?: string
+          notes?: string
+          principles?: string
+          problem?: string
+          scope?: string
+          status?: string
+          success_metrics?: string
+          title?: string
+          updated_at?: string
+          user_id: string
+          users?: string
+        }
+        Update: {
+          created_at?: string
+          features?: Json
+          id?: string
+          module_key?: string
+          non_goals?: string
+          notes?: string
+          principles?: string
+          problem?: string
+          scope?: string
+          status?: string
+          success_metrics?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+          users?: string
         }
         Relationships: []
       }
