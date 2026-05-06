@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { longDate } from "@/lib/date";
+import FeedbackButton from "@/components/FeedbackButton";
 
 type BadgeKey = "campaigns" | "quests" | "ecosystem" | "relations" | "worldmaps" | "frameworks";
 const sections: Array<{ label: string; items: Array<{ to: string; label: string; dot: string; badgeKey?: BadgeKey }> }> = [
@@ -41,6 +42,13 @@ const sections: Array<{ label: string; items: Array<{ to: string; label: string;
       { to: "/philosophy", label: "Philosophy", dot: "var(--purple)" },
       { to: "/manifesto", label: "Manifesto", dot: "var(--ink)" },
       { to: "/perma", label: "PERMA+4 (empirical)", dot: "var(--coral)" },
+    ],
+  },
+  {
+    label: "Build",
+    items: [
+      { to: "/prd", label: "PRD docs", dot: "var(--ink)" },
+      { to: "/feedback", label: "Feedback", dot: "var(--coral)" },
     ],
   },
 ];
@@ -129,7 +137,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       </nav>
 
       {/* Main */}
-      <main style={{ overflowY: "auto" }}>{children}</main>
+      <main style={{ overflowY: "auto", position: "relative" }}>
+        {children}
+        <FeedbackButton />
+      </main>
     </div>
   );
 }
