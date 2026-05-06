@@ -18,12 +18,14 @@ import { Route as AppStatsRouteImport } from './routes/_app/stats'
 import { Route as AppRelationsRouteImport } from './routes/_app/relations'
 import { Route as AppQuestsRouteImport } from './routes/_app/quests'
 import { Route as AppProgressRouteImport } from './routes/_app/progress'
+import { Route as AppPrdRouteImport } from './routes/_app/prd'
 import { Route as AppPhilosophyRouteImport } from './routes/_app/philosophy'
 import { Route as AppPermaRouteImport } from './routes/_app/perma'
 import { Route as AppMotivationRouteImport } from './routes/_app/motivation'
 import { Route as AppMapRouteImport } from './routes/_app/map'
 import { Route as AppManifestoRouteImport } from './routes/_app/manifesto'
 import { Route as AppKnowledgeRouteImport } from './routes/_app/knowledge'
+import { Route as AppFeedbackRouteImport } from './routes/_app/feedback'
 import { Route as AppEcosystemRouteImport } from './routes/_app/ecosystem'
 import { Route as AppDiaryRouteImport } from './routes/_app/diary'
 import { Route as AppDesireRouteImport } from './routes/_app/desire'
@@ -73,6 +75,11 @@ const AppProgressRoute = AppProgressRouteImport.update({
   path: '/progress',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPrdRoute = AppPrdRouteImport.update({
+  id: '/prd',
+  path: '/prd',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppPhilosophyRoute = AppPhilosophyRouteImport.update({
   id: '/philosophy',
   path: '/philosophy',
@@ -101,6 +108,11 @@ const AppManifestoRoute = AppManifestoRouteImport.update({
 const AppKnowledgeRoute = AppKnowledgeRouteImport.update({
   id: '/knowledge',
   path: '/knowledge',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFeedbackRoute = AppFeedbackRouteImport.update({
+  id: '/feedback',
+  path: '/feedback',
   getParentRoute: () => AppRoute,
 } as any)
 const AppEcosystemRoute = AppEcosystemRouteImport.update({
@@ -132,12 +144,14 @@ export interface FileRoutesByFullPath {
   '/desire': typeof AppDesireRoute
   '/diary': typeof AppDiaryRoute
   '/ecosystem': typeof AppEcosystemRoute
+  '/feedback': typeof AppFeedbackRoute
   '/knowledge': typeof AppKnowledgeRoute
   '/manifesto': typeof AppManifestoRoute
   '/map': typeof AppMapRoute
   '/motivation': typeof AppMotivationRoute
   '/perma': typeof AppPermaRoute
   '/philosophy': typeof AppPhilosophyRoute
+  '/prd': typeof AppPrdRoute
   '/progress': typeof AppProgressRoute
   '/quests': typeof AppQuestsRoute
   '/relations': typeof AppRelationsRoute
@@ -151,12 +165,14 @@ export interface FileRoutesByTo {
   '/desire': typeof AppDesireRoute
   '/diary': typeof AppDiaryRoute
   '/ecosystem': typeof AppEcosystemRoute
+  '/feedback': typeof AppFeedbackRoute
   '/knowledge': typeof AppKnowledgeRoute
   '/manifesto': typeof AppManifestoRoute
   '/map': typeof AppMapRoute
   '/motivation': typeof AppMotivationRoute
   '/perma': typeof AppPermaRoute
   '/philosophy': typeof AppPhilosophyRoute
+  '/prd': typeof AppPrdRoute
   '/progress': typeof AppProgressRoute
   '/quests': typeof AppQuestsRoute
   '/relations': typeof AppRelationsRoute
@@ -173,12 +189,14 @@ export interface FileRoutesById {
   '/_app/desire': typeof AppDesireRoute
   '/_app/diary': typeof AppDiaryRoute
   '/_app/ecosystem': typeof AppEcosystemRoute
+  '/_app/feedback': typeof AppFeedbackRoute
   '/_app/knowledge': typeof AppKnowledgeRoute
   '/_app/manifesto': typeof AppManifestoRoute
   '/_app/map': typeof AppMapRoute
   '/_app/motivation': typeof AppMotivationRoute
   '/_app/perma': typeof AppPermaRoute
   '/_app/philosophy': typeof AppPhilosophyRoute
+  '/_app/prd': typeof AppPrdRoute
   '/_app/progress': typeof AppProgressRoute
   '/_app/quests': typeof AppQuestsRoute
   '/_app/relations': typeof AppRelationsRoute
@@ -196,12 +214,14 @@ export interface FileRouteTypes {
     | '/desire'
     | '/diary'
     | '/ecosystem'
+    | '/feedback'
     | '/knowledge'
     | '/manifesto'
     | '/map'
     | '/motivation'
     | '/perma'
     | '/philosophy'
+    | '/prd'
     | '/progress'
     | '/quests'
     | '/relations'
@@ -215,12 +235,14 @@ export interface FileRouteTypes {
     | '/desire'
     | '/diary'
     | '/ecosystem'
+    | '/feedback'
     | '/knowledge'
     | '/manifesto'
     | '/map'
     | '/motivation'
     | '/perma'
     | '/philosophy'
+    | '/prd'
     | '/progress'
     | '/quests'
     | '/relations'
@@ -236,12 +258,14 @@ export interface FileRouteTypes {
     | '/_app/desire'
     | '/_app/diary'
     | '/_app/ecosystem'
+    | '/_app/feedback'
     | '/_app/knowledge'
     | '/_app/manifesto'
     | '/_app/map'
     | '/_app/motivation'
     | '/_app/perma'
     | '/_app/philosophy'
+    | '/_app/prd'
     | '/_app/progress'
     | '/_app/quests'
     | '/_app/relations'
@@ -321,6 +345,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProgressRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/prd': {
+      id: '/_app/prd'
+      path: '/prd'
+      fullPath: '/prd'
+      preLoaderRoute: typeof AppPrdRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/philosophy': {
       id: '/_app/philosophy'
       path: '/philosophy'
@@ -363,6 +394,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppKnowledgeRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/feedback': {
+      id: '/_app/feedback'
+      path: '/feedback'
+      fullPath: '/feedback'
+      preLoaderRoute: typeof AppFeedbackRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/ecosystem': {
       id: '/_app/ecosystem'
       path: '/ecosystem'
@@ -399,12 +437,14 @@ interface AppRouteChildren {
   AppDesireRoute: typeof AppDesireRoute
   AppDiaryRoute: typeof AppDiaryRoute
   AppEcosystemRoute: typeof AppEcosystemRoute
+  AppFeedbackRoute: typeof AppFeedbackRoute
   AppKnowledgeRoute: typeof AppKnowledgeRoute
   AppManifestoRoute: typeof AppManifestoRoute
   AppMapRoute: typeof AppMapRoute
   AppMotivationRoute: typeof AppMotivationRoute
   AppPermaRoute: typeof AppPermaRoute
   AppPhilosophyRoute: typeof AppPhilosophyRoute
+  AppPrdRoute: typeof AppPrdRoute
   AppProgressRoute: typeof AppProgressRoute
   AppQuestsRoute: typeof AppQuestsRoute
   AppRelationsRoute: typeof AppRelationsRoute
@@ -418,12 +458,14 @@ const AppRouteChildren: AppRouteChildren = {
   AppDesireRoute: AppDesireRoute,
   AppDiaryRoute: AppDiaryRoute,
   AppEcosystemRoute: AppEcosystemRoute,
+  AppFeedbackRoute: AppFeedbackRoute,
   AppKnowledgeRoute: AppKnowledgeRoute,
   AppManifestoRoute: AppManifestoRoute,
   AppMapRoute: AppMapRoute,
   AppMotivationRoute: AppMotivationRoute,
   AppPermaRoute: AppPermaRoute,
   AppPhilosophyRoute: AppPhilosophyRoute,
+  AppPrdRoute: AppPrdRoute,
   AppProgressRoute: AppProgressRoute,
   AppQuestsRoute: AppQuestsRoute,
   AppRelationsRoute: AppRelationsRoute,

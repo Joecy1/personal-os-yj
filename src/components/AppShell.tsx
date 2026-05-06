@@ -43,6 +43,13 @@ const sections: Array<{ label: string; items: Array<{ to: string; label: string;
       { to: "/perma", label: "PERMA+4 (empirical)", dot: "var(--coral)" },
     ],
   },
+  {
+    label: "Build",
+    items: [
+      { to: "/prd", label: "PRD docs", dot: "var(--ink)" },
+      { to: "/feedback", label: "Feedback", dot: "var(--coral)" },
+    ],
+  },
 ];
 
 function useBadges(userId: string | undefined) {
