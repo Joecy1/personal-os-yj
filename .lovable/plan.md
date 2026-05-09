@@ -1,87 +1,60 @@
-## Scope
+# Make Personal OS installable on mobile
 
-Continue the approved 4A → 4C → 4D sequence. 4A (Knowledge Vault) shipped last turn. This plan covers **4C** and **4D** in one turn.
+Ship a manifest-only PWA so users can "Add to Home Screen" on iOS/Android and launch full-screen with a custom icon. No service worker, no offline caching — keeps things safe inside the Lovable preview and avoids stale-build issues. Capacitor wrapping for App Store / Play Store can be layered on top later without changing any of this.
 
----
+## What the user will experience
 
-## 4C — Daily ESM Emotion Diary
+- **Android (Chrome)**: install banner / "Install app" menu → app icon on home screen, launches full-screen.
+- **iOS (Safari)**: Share → Add to Home Screen → custom icon, full-screen, custom splash background.
+- App name on home screen: **Personal OS**.
+- Icon: generated from the PersonalOS mark (cream background, serif "P" with amber accent dot, matching current branding).
 
-A lightweight Experience Sampling Method log: quick emotion check-ins (multiple per day) feeding patterns back into the Daily Session.
+## Steps
 
-### Database
-New migration:
-- `esm_entries` table:
-  - `id`, `user_id`, `captured_at` (timestamptz, default now())
-  - `valence` smallint (-3..+3), `arousal` smallint (-3..+3)
-  - `primary_emotion` text (joy / fear / anger / sadness / surprise / disgust / calm / curiosity)
-  - `context` text (what you were doing — short)
-  - `trigger` text (optional)
-  - `note` text
-  - `tags` text[] default `{}`
-- RLS: own-row ALL policy (`auth.uid() = user_id`).
+1. **Generate app icons** from the PersonalOS wordmark style.
+   - `public/icon-192.png` (192×192)
+   - `public/icon-512.png` (512×512)
+   - `public/icon-maskable-512.png` (512×512, with safe-zone padding for Android adaptive icons)
+   - `public/apple-touch-icon.png` (180×180, for iOS home screen)
+   - `public/favicon.ico` / `public/favicon-32.png` (refresh existing favicon to match)
 
-### UI
-- **New route `src/routes/_app/diary.tsx`** — "Emotion diary"
-  - Top: quick-capture card (valence slider, arousal slider, emotion pill grid, context input, optional note) → one-click "Log".
-  - Today timeline (chronological list of today's entries).
-  - 7-day strip: per-day average valence/arousal as tiny bars.
-  - History list with filter by emotion / tag.
-- **Daily Session integration (`src/routes/_app/index.tsx`)**:
-  - Add a compact "Emotion pulse" widget showing today's count + last entry, with a "+ Log" button that opens the same capture form (inline, not a modal — match existing style).
-- **Sidebar (`src/components/AppShell.tsx`)**: Add `Diary` entry under Daily group.
+2. **Add `public/manifest.webmanifest`** with:
+   - `name`: "Personal OS"
+   - `short_name`: "Personal OS"
+   - `start_url`: "/"
+   - `scope`: "/"
+   - `display`: "standalone"
+   - `orientation`: "portrait"
+   - `background_color`: matches `--cream` token
+   - `theme_color`: matches `--cream` token (status bar tint)
+   - `icons`: the four sizes above, with `purpose: "any"` and `purpose: "maskable"`.
 
----
+3. **Update `src/routes/__root.tsx` `head()`** to add:
+   - `<link rel="manifest" href="/manifest.webmanifest">`
+   - `<meta name="theme-color" content="<cream hex>">`
+   - `<link rel="apple-touch-icon" href="/apple-touch-icon.png">`
+   - `<meta name="apple-mobile-web-app-capable" content="yes">`
+   - `<meta name="apple-mobile-web-app-status-bar-style" content="default">`
+   - `<meta name="apple-mobile-web-app-title" content="Personal OS">`
+   - Refreshed `<link rel="icon">` references.
 
-## 4D — Progress Screen + Campaign Templates + Manifesto
+4. **Verify** by publishing and testing on a real phone:
+   - Android Chrome shows install prompt.
+   - iOS Safari → Share → Add to Home Screen shows correct icon + name.
+   - Launched app opens full-screen (no browser chrome) and lands on `/`.
 
-### D1. Progress screen
-**New route `src/routes/_app/progress.tsx`** — read-only aggregation across modules:
-- **Header KPIs**: streak (current/best), XP total, level, frameworks unlocked count.
-- **Capitals radar** (text/bar fallback): all 7 capitals from `player_stats`.
-- **Last 30 days**: quest completions per day (sparkline), daily review completion rate, ESM entries per day.
-- **Desire cycles**: counts by status (active / fulfilled / abandoned), avg phase reached.
-- **Frameworks**: unlocked vs locked, list of unlocked with date.
-- **Campaigns**: active count, milestones completed.
-- All data via existing tables — no new schema.
-- Sidebar entry: "Progress" under a new `Reflect` group (or under Daily group).
+## Capacitor path (future, not now)
 
-### D2. Campaign templates
-- **In `src/routes/_app/campaigns.tsx`**: add a "+ From template" button next to "+ New campaign".
-- Templates defined in-code (no DB) as a static list — each has title, win_condition, default tags, suggested milestones (jsonb), and suggested framework slugs.
-- Seed templates (5):
-  1. Use of Technology — intentional consumption loop
-  2. Career Development — skill ladder
-  3. Health Baseline — sleep / movement / nutrition
-  4. Knowledge Production — write / publish cadence
-  5. Relational Capital — deepen 5 key ties
-- Selecting a template opens a confirm dialog (existing pattern), inserts the campaign, attaches frameworks_used, and toasts.
+When you're ready to ship to App Store / Play Store:
+- Add Capacitor (`@capacitor/core`, `@capacitor/ios`, `@capacitor/android`) in a separate native project that points at the published web build.
+- Reuse the same icons/splash assets generated above.
+- Requires Apple Developer ($99/yr) and Google Play ($25 one-time) accounts.
 
-### D3. Manifesto / Philosophy section
-- **New route `src/routes/_app/manifesto.tsx`** — read-only canonical statement of the Personal OS philosophy: media diet, impact orientation, production-over-consumption coupling, knowledge-as-foundation. Static long-form content with section headings, blockquotes, and links to relevant modules (Desire, Knowledge, Campaigns).
-- Sidebar entry: "Manifesto" near the bottom (alongside Philosophy if present).
+This is intentionally out of scope for this change — the PWA work is the prerequisite and ships value immediately.
 
----
+## Technical notes
 
-## File Touch List
-
-**Created**
-- `supabase/migrations/<ts>_esm_entries.sql`
-- `src/routes/_app/diary.tsx`
-- `src/routes/_app/progress.tsx`
-- `src/routes/_app/manifesto.tsx`
-- `src/lib/campaign-templates.ts` (template definitions)
-
-**Edited**
-- `src/components/AppShell.tsx` (3 sidebar links)
-- `src/routes/_app/index.tsx` (Emotion pulse widget)
-- `src/routes/_app/campaigns.tsx` (+ From template button + dialog)
-- `src/routeTree.gen.ts` (auto)
-
----
-
-## Out of Scope (this turn)
-- Charts library — use simple inline SVG / bars to stay light.
-- ESM push reminders / scheduling — manual capture only.
-- Editing/deleting ESM entries — log-only for v1 (delete can come next).
-
-Ready to implement on approval.
+- **No `vite-plugin-pwa`, no service worker.** Lovable's preview proxy already handles HTML cache headers correctly; adding a service worker would risk serving stale builds and break the preview iframe.
+- Manifest fields like `start_url` and `display` are pinned at install time on iOS/Android — pick them carefully now; later changes only affect fresh installs.
+- All icon files live in `public/` so they're served from the site root with no bundler involvement.
+- No database, auth, or business-logic changes. Pure frontend + static assets.
