@@ -1,4 +1,4 @@
-export type Json =
+﻿export type Json =
   | string
   | number
   | boolean
@@ -14,6 +14,80 @@ export type Database = {
   }
   public: {
     Tables: {
+      activities: {
+        Row: {
+          activity_type: string
+          created_at: string | null
+          date: string
+          duration_minutes: number | null
+          id: string
+          intensity: number | null
+          notes: string | null
+          tags: string[] | null
+          time: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          activity_type: string
+          created_at?: string | null
+          date: string
+          duration_minutes?: number | null
+          id?: string
+          intensity?: number | null
+          notes?: string | null
+          tags?: string[] | null
+          time?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          activity_type?: string
+          created_at?: string | null
+          date?: string
+          duration_minutes?: number | null
+          id?: string
+          intensity?: number | null
+          notes?: string | null
+          tags?: string[] | null
+          time?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      activity_context: {
+        Row: {
+          activity_id: string
+          context_data: Json | null
+          created_at: string | null
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          activity_id: string
+          context_data?: Json | null
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+        }
+        Update: {
+          activity_id?: string
+          context_data?: Json | null
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_context_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       campaigns: {
         Row: {
           capital_targets: Json
@@ -59,6 +133,54 @@ export type Database = {
           user_id?: string
           win_condition?: string | null
           xp_value?: number
+        }
+        Relationships: []
+      }
+      daily_context: {
+        Row: {
+          created_at: string | null
+          date: string
+          energy_level: number | null
+          finances_sentiment: string | null
+          id: string
+          location: string | null
+          notes: string | null
+          sleep_hours: number | null
+          sleep_quality: number | null
+          stress_level: number | null
+          updated_at: string | null
+          user_id: string
+          weather: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          date: string
+          energy_level?: number | null
+          finances_sentiment?: string | null
+          id?: string
+          location?: string | null
+          notes?: string | null
+          sleep_hours?: number | null
+          sleep_quality?: number | null
+          stress_level?: number | null
+          updated_at?: string | null
+          user_id: string
+          weather?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          energy_level?: number | null
+          finances_sentiment?: string | null
+          id?: string
+          location?: string | null
+          notes?: string | null
+          sleep_hours?: number | null
+          sleep_quality?: number | null
+          stress_level?: number | null
+          updated_at?: string | null
+          user_id?: string
+          weather?: string | null
         }
         Relationships: []
       }
@@ -464,6 +586,114 @@ export type Database = {
         }
         Relationships: []
       }
+      perma_aggregates: {
+        Row: {
+          achievement_avg: number | null
+          achievement_trend: number | null
+          achievement_volatility: number | null
+          created_at: string | null
+          date: string
+          economic_security_avg: number | null
+          economic_security_trend: number | null
+          economic_security_volatility: number | null
+          engagement_avg: number | null
+          engagement_trend: number | null
+          engagement_volatility: number | null
+          environment_avg: number | null
+          environment_trend: number | null
+          environment_volatility: number | null
+          id: string
+          meaning_avg: number | null
+          meaning_trend: number | null
+          meaning_volatility: number | null
+          physical_health_avg: number | null
+          physical_health_trend: number | null
+          physical_health_volatility: number | null
+          positive_emotion_avg: number | null
+          positive_emotion_trend: number | null
+          positive_emotion_volatility: number | null
+          positive_mindset_avg: number | null
+          positive_mindset_trend: number | null
+          positive_mindset_volatility: number | null
+          relationships_avg: number | null
+          relationships_trend: number | null
+          relationships_volatility: number | null
+          updated_at: string | null
+          user_id: string
+          window_type: string
+        }
+        Insert: {
+          achievement_avg?: number | null
+          achievement_trend?: number | null
+          achievement_volatility?: number | null
+          created_at?: string | null
+          date: string
+          economic_security_avg?: number | null
+          economic_security_trend?: number | null
+          economic_security_volatility?: number | null
+          engagement_avg?: number | null
+          engagement_trend?: number | null
+          engagement_volatility?: number | null
+          environment_avg?: number | null
+          environment_trend?: number | null
+          environment_volatility?: number | null
+          id?: string
+          meaning_avg?: number | null
+          meaning_trend?: number | null
+          meaning_volatility?: number | null
+          physical_health_avg?: number | null
+          physical_health_trend?: number | null
+          physical_health_volatility?: number | null
+          positive_emotion_avg?: number | null
+          positive_emotion_trend?: number | null
+          positive_emotion_volatility?: number | null
+          positive_mindset_avg?: number | null
+          positive_mindset_trend?: number | null
+          positive_mindset_volatility?: number | null
+          relationships_avg?: number | null
+          relationships_trend?: number | null
+          relationships_volatility?: number | null
+          updated_at?: string | null
+          user_id: string
+          window_type: string
+        }
+        Update: {
+          achievement_avg?: number | null
+          achievement_trend?: number | null
+          achievement_volatility?: number | null
+          created_at?: string | null
+          date?: string
+          economic_security_avg?: number | null
+          economic_security_trend?: number | null
+          economic_security_volatility?: number | null
+          engagement_avg?: number | null
+          engagement_trend?: number | null
+          engagement_volatility?: number | null
+          environment_avg?: number | null
+          environment_trend?: number | null
+          environment_volatility?: number | null
+          id?: string
+          meaning_avg?: number | null
+          meaning_trend?: number | null
+          meaning_volatility?: number | null
+          physical_health_avg?: number | null
+          physical_health_trend?: number | null
+          physical_health_volatility?: number | null
+          positive_emotion_avg?: number | null
+          positive_emotion_trend?: number | null
+          positive_emotion_volatility?: number | null
+          positive_mindset_avg?: number | null
+          positive_mindset_trend?: number | null
+          positive_mindset_volatility?: number | null
+          relationships_avg?: number | null
+          relationships_trend?: number | null
+          relationships_volatility?: number | null
+          updated_at?: string | null
+          user_id?: string
+          window_type?: string
+        }
+        Relationships: []
+      }
       perma_entries: {
         Row: {
           achievement: number
@@ -477,7 +707,9 @@ export type Database = {
           physical_health: number
           positive_emotion: number
           positive_mindset: number
+          reflection_id: string | null
           relationships: number
+          updated_at: string | null
           user_id: string
         }
         Insert: {
@@ -492,7 +724,9 @@ export type Database = {
           physical_health?: number
           positive_emotion?: number
           positive_mindset?: number
+          reflection_id?: string | null
           relationships?: number
+          updated_at?: string | null
           user_id: string
         }
         Update: {
@@ -507,7 +741,9 @@ export type Database = {
           physical_health?: number
           positive_emotion?: number
           positive_mindset?: number
+          reflection_id?: string | null
           relationships?: number
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: []
@@ -1116,7 +1352,60 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      calculate_momentum: {
+        Args: {
+          p_dimension: string
+          p_target_date?: string
+          p_user_id: string
+          p_window_days?: number
+        }
+        Returns: number
+      }
+      calculate_rolling_average: {
+        Args: {
+          p_dimension: string
+          p_target_date?: string
+          p_user_id: string
+          p_window_days: number
+        }
+        Returns: number
+      }
+      calculate_trend_direction: {
+        Args: {
+          p_dimension: string
+          p_prior_days?: number
+          p_recent_days?: number
+          p_target_date?: string
+          p_user_id: string
+        }
+        Returns: number
+      }
+      calculate_volatility: {
+        Args: {
+          p_dimension: string
+          p_target_date?: string
+          p_user_id: string
+          p_window_days?: number
+        }
+        Returns: number
+      }
+      correlate_activity_and_wellbeing: {
+        Args: {
+          p_activity_type: string
+          p_dimension: string
+          p_lag_days?: number
+          p_user_id: string
+          p_window_days?: number
+        }
+        Returns: number
+      }
+      refresh_perma_aggregates: {
+        Args: { p_end_date?: string; p_start_date?: string; p_user_id: string }
+        Returns: {
+          aggregates_created: number
+          aggregates_updated: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

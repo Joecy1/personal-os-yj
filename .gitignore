@@ -15,6 +15,7 @@ dist-ssr
 .tanstack/**
 .nitro
 *.local
+old-supabase-export/
 
 # Wrangler / Cloudflare
 .wrangler/
@@ -30,3 +31,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+supabase/.temp/
