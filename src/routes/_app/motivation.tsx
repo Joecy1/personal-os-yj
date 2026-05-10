@@ -21,20 +21,19 @@ function MotivationPage() {
     queryFn: async () => (await supabase.from("motivation_entries").select("*").order("created_at", { ascending: false }).limit(20)).data ?? [],
   });
 
-  const save = useMutation({
-    mutationFn: async (extraction: any) => {
+  const createQuests = useMutation({
+    mutationFn: async (actions: string[]) => {
       if (!user) return;
-      await supabase.from("motivation_entries").insert({
+      const quests = actions.map((action) => ({
         user_id: user.id,
-        raw_text: text,
-        catalyst: extraction.catalyst ?? "",
-        desire: extraction.desire ?? "",
-        emotion: extraction.emotion ?? "",
-        reality_check: extraction.reality_check ?? "",
-        actions: extraction.actions ?? [],
-      });
+        title: action,
+        type: "daily",
+        xp_value: 50,
+        campaign_id: null,
+      }));
+      await supabase.from("quests").insert(quests);
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["motivation-entries"] }); toast.success("Captured"); setText(""); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["quests"] }); toast.success("Quests created from actions"); },
   });
 
   const analyze = async () => {
@@ -109,7 +108,10 @@ function MotivationPage() {
               <Cell label="Reality check" value={e.reality_check} accent="var(--teal)" />
               {Array.isArray(e.actions) && (e.actions as string[]).length > 0 && (
                 <div style={{ marginTop: 12 }}>
-                  <div className="card-label" style={{ marginBottom: 6 }}>Actions</div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                    <div className="card-label">Actions</div>
+                    <button className="pos-btn secondary" style={{ fontSize: 11, padding: "4px 8px" }} onClick={() => createQuests.mutate(e.actions as string[])}>Create quests</button>
+                  </div>
                   <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, lineHeight: 1.7, color: "var(--ink)" }}>
                     {(e.actions as string[]).map((a, i) => <li key={i}>{a}</li>)}
                   </ul>

@@ -91,16 +91,30 @@ function Daily() {
     },
   });
 
+  const { data: philosophy } = useQuery({
+    queryKey: ["philosophy-reminder", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data } = await supabase.from("philosophy_entries").select("*").order("created_at", { ascending: false }).limit(1);
+      return data?.[0];
+    },
+  });
+
   const { data: pomToday } = useQuery({
     queryKey: ["pomodoro-today", user?.id],
     enabled: !!user,
     queryFn: async () => {
-      const start = new Date(); start.setHours(0, 0, 0, 0);
-      const { data } = await supabase.from("pomodoro_sessions").select("*").gte("started_at", start.toISOString()).order("started_at", { ascending: false });
+      const start = new Date();
+      start.setHours(0, 0, 0, 0);
+      const { data } = await supabase
+        .from("pomodoro_sessions")
+        .select("*")
+        .gte("started_at", start.toISOString())
+        .order("started_at", { ascending: false });
       return data ?? [];
     },
   });
-
+  
   const [showCapture, setShowCapture] = useState(false);
   const [focus, setFocus] = useState("");
   const [wentWell, setWentWell] = useState("");
@@ -132,6 +146,20 @@ function Daily() {
     <Module>
       <div className="font-serif" style={{ fontSize: 28, fontStyle: "italic", letterSpacing: "-0.02em", marginBottom: 6 }}>{greeting()}</div>
       <div className="font-mono" style={{ fontSize: 12, color: "var(--ink-3)", letterSpacing: "0.08em", marginBottom: 32 }}>{longDate()}</div>
+
+      {/* Philosophy reminder */}
+      {philosophy && (
+        <div className="pos-card" style={{ marginBottom: 16, borderLeft: "3px solid var(--purple)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+            <div>
+              <div className="card-label" style={{ color: "var(--purple)" }}>Philosophy reminder</div>
+              <div style={{ fontSize: 14, color: "var(--ink)", marginTop: 4 }}>{philosophy.content}</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--ink-4)", marginTop: 6 }}>{philosophy.type} · {philosophy.index}</div>
+            </div>
+            <Link to="/philosophy" className="pos-btn secondary" style={{ fontSize: 11 }}>View all →</Link>
+          </div>
+        </div>
+      )}
 
       <div style={{ background: "var(--amber-bg)", border: "1px solid rgba(200,130,10,0.2)", borderRadius: 10, padding: "18px 22px", marginBottom: 16 }}>
         <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--amber)", marginBottom: 6 }}>Today's focus</div>
