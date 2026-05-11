@@ -4,7 +4,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const MODEL = "google/gemini-2.5-flash";
 const MAX_TEXT = 4000;
 
 function prompt(rawText: string) {
@@ -15,35 +14,17 @@ Their text:
 ${rawText}
 """
 
-Extract the structure of the motivation loop:
-- catalyst: the external trigger or situation that sparked this (1 short sentence).
-- desire: what they actually want underneath (1 short sentence, name the deeper want).
-- emotion: dominant felt emotion right now — one word from: desire, fear, greed, anger, longing, motivation, restlessness, hope, anxiety, envy, awe, calm.
-- reality_check: a single honest sentence about what reality is actually offering vs the desire.
-- actions: 2 to 4 concrete next actions, each 6-10 words, verbs first, doable this week.
-
-Be sharp and unflinching. Do not hedge. Do not moralize.`;
+Extract the structure of the motivation loop. Return ONLY valid JSON with no markdown code blocks:
+{
+  "catalyst": "the external trigger or situation that sparked this (1 short sentence)",
+  "desire": "what they actually want underneath (1 short sentence, name the deeper want)",
+  "emotion": "dominant felt emotion: desire, fear, greed, anger, longing, motivation, restlessness, hope, anxiety, envy, awe, or calm",
+  "reality_check": "a single honest sentence about what reality is actually offering vs the desire",
+  "actions": ["action 1 (6-10 words, verb first)", "action 2", "action 3", "action 4"]
 }
 
-const tool = {
-  type: "function",
-  function: {
-    name: "extract_motivation",
-    description: "Extract motivation loop structure from raw text.",
-    parameters: {
-      type: "object",
-      properties: {
-        catalyst: { type: "string" },
-        desire: { type: "string" },
-        emotion: { type: "string" },
-        reality_check: { type: "string" },
-        actions: { type: "array", items: { type: "string" } },
-      },
-      required: ["catalyst", "desire", "emotion", "reality_check", "actions"],
-      additionalProperties: false,
-    },
-  },
-};
+Be sharp and unflinching. Do not hedge. Do not moralize. Return ONLY the JSON object.`;
+}
 
 async function verifyAuth(req: Request): Promise<Response | null> {
   const authHeader = req.headers.get("Authorization");
@@ -72,29 +53,45 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: "Input too long" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    const key = Deno.env.get("LOVABLE_API_KEY");
-    if (!key) return new Response(JSON.stringify({ error: "LOVABLE_API_KEY missing" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    const key = Deno.env.get("DEEPSEEK_API_KEY");
+    if (!key) return new Response(JSON.stringify({ error: "DEEPSEEK_API_KEY missing" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
-    const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const r = await fetch("https://api.deepseek.com/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: MODEL,
+        model: "deepseek-chat",
         messages: [{ role: "user", content: prompt(rawText) }],
-        tools: [tool],
-        tool_choice: { type: "function", function: { name: "extract_motivation" } },
+        temperature: 0.7,
+        max_tokens: 1500,
       }),
     });
+
     if (!r.ok) {
       const t = await r.text();
       const code = r.status === 429 ? 429 : r.status === 402 ? 402 : 500;
       return new Response(JSON.stringify({ error: t }), { status: code, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
+
     const data = await r.json();
-    const call = data.choices?.[0]?.message?.tool_calls?.[0];
-    if (!call) return new Response(JSON.stringify({ error: "no tool call" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    const content = data.choices?.[0]?.message?.content;
+    if (!content) {
+      return new Response(JSON.stringify({ error: "no response" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    // Extract JSON from response (in case there's extra text)
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      return new Response(JSON.stringify({ error: "invalid response format" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
     let parsed: any;
-    try { parsed = JSON.parse(call.function.arguments); } catch (e) { return new Response(JSON.stringify({ error: "invalid args: " + (e as Error).message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }); }
+    try {
+      parsed = JSON.parse(jsonMatch[0]);
+    } catch (e) {
+      return new Response(JSON.stringify({ error: "invalid json: " + (e as Error).message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
     return new Response(JSON.stringify({ extraction: parsed }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
     return new Response(JSON.stringify({ error: (e as Error).message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
