@@ -20,6 +20,27 @@ function MotivationPage() {
     enabled: !!user,
     queryFn: async () => (await supabase.from("motivation_entries").select("*").order("created_at", { ascending: false }).limit(20)).data ?? [],
   });
+  
+  const save = useMutation({
+    mutationFn: async (extraction: any) => {
+      if (!user) return;
+      await supabase.from("motivation_entries").insert({
+        user_id: user.id,
+        catalyst: extraction.catalyst,
+        desire: extraction.desire,
+        emotion: extraction.emotion,
+        reality_check: extraction.reality_check,
+        actions: extraction.actions,
+        raw_text: text,
+      });
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["motivation-entries"] });
+      setText("");
+      toast.success("Entry saved");
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
 
   const createQuests = useMutation({
     mutationFn: async (actions: string[]) => {
