@@ -19,7 +19,7 @@ const FN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/worldmap-ai`;
 async function callExtract(rawText: string, topic: string) {
   const r = await fetch(FN_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json", apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string },
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}` },
     body: JSON.stringify({ action: "extract", rawText, topic }),
   });
   if (r.status === 429) throw new Error("Rate limited — try again shortly.");
@@ -32,7 +32,7 @@ async function callExtract(rawText: string, topic: string) {
 async function callCompare(myMap: MapData, partnerMap: MapData, myLabel: string, partnerLabel: string, topic: string) {
   const r = await fetch(FN_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json", apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string },
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}` },
     body: JSON.stringify({ action: "compare", myMap, partnerMap, myLabel, partnerLabel, topic }),
   });
   if (r.status === 429) throw new Error("Rate limited — try again shortly.");
