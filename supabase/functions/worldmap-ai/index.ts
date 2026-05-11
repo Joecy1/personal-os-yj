@@ -1,10 +1,10 @@
-// Worldmap AI extraction + comparison via Lovable AI Gateway
+// Worldmap AI extraction + comparison via DeepSeek
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const MODEL = "google/gemini-2.5-pro";
+const DEEPSEEK_MODEL = "deepseek-chat";
 
 function extractionPrompt(rawText: string, topic: string) {
   return `You are a cartographer of thought. Read the person's freeform description of how they see "${topic}" and extract the structure of their mental model.
@@ -173,26 +173,33 @@ const comparisonTool = {
   },
 };
 
-async function callGateway(messages: any[], tool: any) {
-  const key = Deno.env.get("LOVABLE_API_KEY");
-  if (!key) throw new Error("LOVABLE_API_KEY missing");
-  const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+async function callDeepSeek(messages: any[], tool: any) {
+  const deepseekKey = Deno.env.get("DEEPSEEK_API_KEY");
+
+  if (!deepseekKey) {
+    return { error: { status: 500, body: "DEEPSEEK_API_KEY missing" } };
+  }
+
+  const r = await fetch("https://api.deepseek.com/chat/completions", {
     method: "POST",
-    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+    headers: { Authorization: `Bearer ${deepseekKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: MODEL,
+      model: DEEPSEEK_MODEL,
       messages,
       tools: [tool],
       tool_choice: { type: "function", function: { name: tool.function.name } },
     }),
   });
+
   if (!r.ok) {
     const t = await r.text();
     return { error: { status: r.status, body: t } };
   }
+
   const data = await r.json();
   const call = data.choices?.[0]?.message?.tool_calls?.[0];
   if (!call) return { error: { status: 500, body: "no tool call returned" } };
+
   try {
     return { data: JSON.parse(call.function.arguments) };
   } catch (e) {
@@ -242,7 +249,7 @@ Deno.serve(async (req) => {
       if (rawText.length > MAX_RAW_TEXT || topic.length > MAX_TOPIC) {
         return new Response(JSON.stringify({ error: "Input too long" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
-      const result = await callGateway(
+      const result = await callDeepSeek(
         [{ role: "user", content: extractionPrompt(rawText, topic) }],
         extractionTool,
       );
@@ -267,7 +274,7 @@ Deno.serve(async (req) => {
       if (JSON.stringify(myMap).length > MAX_MAP_BYTES || JSON.stringify(partnerMap).length > MAX_MAP_BYTES) {
         return new Response(JSON.stringify({ error: "Map payload too large" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
-      const result = await callGateway(
+      const result = await callDeepSeek(
         [{ role: "user", content: comparisonPrompt(myMap, partnerMap, myLabel, partnerLabel, topic) }],
         comparisonTool,
       );
