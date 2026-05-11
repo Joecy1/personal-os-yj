@@ -39,11 +39,11 @@ export function MapRenderer({ mapData, variant = "full", style }: { mapData: Map
 
   const compact = variant === "compact";
   const scale = compact ? 0.5 : 1;
-  const cx = compact ? 130 : 260;
-  const cy = compact ? 50 : 100;
-  const vb = compact ? "0 0 260 100" : "0 0 520 200";
-  const r1 = compact ? 50 : 90;
-  const r2 = compact ? 90 : 160;
+  const cx = compact ? 130 : 400;
+  const cy = compact ? 50 : 300;
+  const vb = compact ? "0 0 260 100" : "0 0 800 600";
+  const r1 = compact ? 50 : 140;
+  const r2 = compact ? 90 : 250;
 
   const ring1 = mapData.nodes.filter((n) => n.type !== "peripheral");
   const ring2 = mapData.nodes.filter((n) => n.type === "peripheral");
@@ -67,7 +67,7 @@ export function MapRenderer({ mapData, variant = "full", style }: { mapData: Map
   };
 
   return (
-    <svg viewBox={vb} style={{ width: "100%", height: "auto", display: "block", ...style }}>
+    <svg viewBox={vb} style={{ width: "100%", height: "auto", minHeight: "600px", display: "block", ...style }}>
       {/* connections behind */}
       {mapData.connections.map((c, i) => {
         const fromKey = c.from === "core" ? "core" : c.from;
